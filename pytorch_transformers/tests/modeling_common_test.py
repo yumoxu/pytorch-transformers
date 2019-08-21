@@ -264,7 +264,6 @@ class CommonTestCases:
                 shutil.rmtree(directory)
 
         def test_head_pruning_save_load_from_config_init(self):
-            print(self.test_pruning)
             if not self.test_pruning:
                 return
 
