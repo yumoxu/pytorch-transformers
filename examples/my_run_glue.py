@@ -219,7 +219,7 @@ def train(args, train_dataset, model, tokenizer):
                 if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                     tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
                     avg_loss = (tr_loss - logging_loss) / args.logging_steps
-                    tb_writer.add_scalar('loss', tb_writer, global_step)
+                    tb_writer.add_scalar('loss', avg_loss, global_step)
                     logging_loss = tr_loss
 
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
