@@ -231,10 +231,9 @@ def train(args, train_dataset, model, tokenizer):
 
                     results = evaluate(args, model, tokenizer)
 
-                    eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
-                    output_eval_file = os.path.join(eval_output_dir, 'eval_results.txt')
-                    with io.open(output_eval_file, "w") as writer:
-                        writer.write("%s \t %s \t %s\n" % (str(global_step), '{:.2f}'.format(avg_loss), '{:.2f}'.format(result['f1'])))
+                    output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
+                    with io.open(output_eval_file, 'a', encoding='utf-8') as writer:
+                        writer.write("%s\t%s\t%s\n" % (str(global_step), '{:.2f}'.format(avg_loss), '{:.2f}'.format(result['f1'])))
 
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
