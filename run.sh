@@ -1,8 +1,9 @@
 export DATA_DIR=/afs/inf.ed.ac.uk/group/project/material/querysum/data/squad/proc
 export OUTPUT_DIR=/afs/inf.ed.ac.uk/group/project/material/querysum/model
-export TASK_NAME=QAS
+export TASK_NAME=qas
 
-/afs/inf.ed.ac.uk/group/project/material/querysum/bin/python3 ./examples/run_glue.py \
+#/afs/inf.ed.ac.uk/group/project/material/querysum/bin/python3 ./examples/run_glue.py \
+python ./examples/my_run_glue.py \
     --model_type bert \
     --model_name_or_path bert-base-uncased \
     --task_name $TASK_NAME \
