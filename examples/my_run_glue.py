@@ -118,7 +118,7 @@ def update_checkpoint_dict(checkpoint_dict, k, v, max_n_checkpoint=3):
 
 
 def clean_outdated_checkpoints(checkpoint, checkpoint_dict):
-    ckpt_dirs = [dir for dir in listdir(checkpoint) if fn.startswith('checkpoint-')]
+    ckpt_dirs = [dir for dir in listdir(checkpoint) if dir.startswith('checkpoint-')]
     target_ckpt_dirs = ['checkpoint-{}'.format(n_iter) for n_iter in checkpoint_dict]
 
     for ckpt in ckpt_dirs:
@@ -126,7 +126,7 @@ def clean_outdated_checkpoints(checkpoint, checkpoint_dict):
             os.remove(join(checkpoint, ckpt))
             logger.info('Remove checkpoint: {}'.format(ckpt))
 
-    ckpt_dirs = [dir for dir in listdir(checkpoint) if fn.startswith('checkpoint-')]
+    ckpt_dirs = [dir for dir in listdir(checkpoint) if dir.startswith('checkpoint-')]
     logger.info('Available #checkpoints: {}'.format(len(ckpt_dirs)))
 
 
