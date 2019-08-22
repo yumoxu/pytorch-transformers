@@ -113,6 +113,7 @@ class MrpcProcessor(DataProcessor):
             if i == 0:
                 continue
             guid = "%s-%s" % (set_type, i)
+            print('{}th line: {}'.format(i, line))
             text_a = line[3]
             text_b = line[4]
             label = line[0]

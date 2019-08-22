@@ -1,12 +1,14 @@
 export DATA_DIR=/afs/inf.ed.ac.uk/group/project/material/querysum/data/squad/proc
-export OUTPUT_DIR=/afs/inf.ed.ac.uk/group/project/material/querysum/model
+export CACHE_DIR=/afs/inf.ed.ac.uk/group/project/material/querysum/model/bert_cache
+export OUTPUT_DIR=/afs/inf.ed.ac.uk/group/project/material/querysum/model/qas
 export TASK_NAME=qas
 
-#/afs/inf.ed.ac.uk/group/project/material/querysum/bin/python3 ./examples/run_glue.py \
+#/afs/inf.ed.ac.uk/group/project/material/querysum/bin/python3 ./examples/my_run_glue.py \
 python ./examples/my_run_glue.py \
     --model_type bert \
     --model_name_or_path bert-base-uncased \
     --task_name $TASK_NAME \
+    --cache_dir $CACHE_DIR \
     --do_train \
     --do_eval \
     --do_lower_case \
