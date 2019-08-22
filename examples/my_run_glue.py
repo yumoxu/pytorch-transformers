@@ -67,6 +67,63 @@ def set_seed(args):
         torch.cuda.manual_seed_all(args.seed)
 
 
+
+def get_max_v(d):
+    if d.values():
+        return max(d.values())
+    return 0.0
+
+
+def get_min_kv(d, init_v=1.0):
+    min_k = None
+    min_v = init_v
+    for k, v in d.items():
+        if v < min_v:
+            min_v = v
+            min_k = k
+    return min_k, min_v
+
+
+def update_checkpoint_dict(checkpoint_dict, k, v, max_n_checkpoint=3):
+    """
+
+    :param checkpoint_dict:
+    :param k:
+    :param v: the larger, the better.
+    :param max_n_checkpoint:
+    :return:
+    """
+    update = False
+    is_best = v > get_max_v(checkpoint_dict)
+
+    if len(checkpoint_dict) < max_n_checkpoint:  # not full
+        checkpoint_dict[k] = v
+        update = True
+        return checkpoint_dict, update, is_best
+
+    min_k, min_v = get_min_kv(checkpoint_dict)
+    if v > min_v:  # replace
+        checkpoint_dict.pop(min_k)
+        checkpoint_dict[k] = v
+        update = True
+        return checkpoint_dict, update, is_best
+
+    return checkpoint_dict, update, is_best
+
+
+def clean_outdated_checkpoints(checkpoint, checkpoint_dict):
+    ckpt_dirs = [dir for dir in listdir(checkpoint) if fn.startswith('checkpoint-')]
+    target_ckpt_dirs = ['checkpoint-{}'.format(n_iter) for n_iter in checkpoint_dict]
+
+    for ckpt in ckpt_dirs:
+        if ckpt not in target_ckpt_dirs:
+            os.remove(join(checkpoint, ckpt))
+            logger.info('Remove checkpoint: {}'.format(ckpt))
+
+    ckpt_dirs = [dir for dir in listdir(checkpoint) if fn.startswith('checkpoint-')]
+    logger.info('Available #checkpoints: {}'.format(len(ckpt_dirs)))
+
+
 def train(args, train_dataset, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
@@ -119,6 +176,8 @@ def train(args, train_dataset, model, tokenizer):
 
     global_step = 0
     tr_loss, logging_loss = 0.0, 0.0
+    checkpoint_dict = dict()  # {n_batches: f1}
+
     model.zero_grad()
     train_iterator = trange(int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
     set_seed(args)  # Added here for reproductibility (even between python 2 and 3)
@@ -163,22 +222,32 @@ def train(args, train_dataset, model, tokenizer):
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
                     # Save model checkpoint
                     # Evaluate before saving
-                    if args.local_rank == -1 and args.evaluate_during_training:
+                    if not (args.local_rank == -1 and args.evaluate_during_training):
                         # Only evaluate when single GPU otherwise metrics may not average well
-                        results = evaluate(args, model, tokenizer)
+                        raise ValueError('Have to eval before saving model!')
 
-                        for key, value in results.items():
-                            print('Dev results: {}: {}'.format(key, value))
-                            tb_writer.add_scalar('eval_{}'.format(key), value, global_step)
+                    results = evaluate(args, model, tokenizer, global_step=global_step)
+                    update_params = {
+                        'checkpoint_dict': checkpoint_dict,
+                        'k': global_step,
+                        'v': results['f1'],
+                    }
+                    checkpoint_dict, update, _ = update_checkpoint_dict(**update_params)
 
-                    output_dir = os.path.join(args.output_dir, 'checkpoint-{}'.format(global_step))
-                    if not os.path.exists(output_dir):
-                        os.makedirs(output_dir)
+                    if update:
+                        # init dir
+                        output_dir = os.path.join(args.output_dir, 'checkpoint-{}'.format(global_step))
+                        if not os.path.exists(output_dir):
+                            os.makedirs(output_dir)
 
-                    model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
-                    model_to_save.save_pretrained(output_dir)
-                    torch.save(args, os.path.join(output_dir, 'training_args.bin'))
-                    logger.info("Saving model checkpoint to %s", output_dir)
+                        # save
+                        model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
+                        model_to_save.save_pretrained(output_dir)
+                        torch.save(args, os.path.join(output_dir, 'training_args.bin'))
+                        logger.info("Saving model checkpoint to %s", output_dir)
+
+                        # clean
+                        clean_outdated_checkpoints(args.output_dir, checkpoint_dict)
 
             if args.max_steps > 0 and global_step > args.max_steps:
                 epoch_iterator.close()
@@ -193,7 +262,7 @@ def train(args, train_dataset, model, tokenizer):
     return global_step, tr_loss / global_step
 
 
-def evaluate(args, model, tokenizer, prefix=""):
+def evaluate(args, model, tokenizer, global_step, prefix=""):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
     eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
     eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
@@ -247,12 +316,13 @@ def evaluate(args, model, tokenizer, prefix=""):
         result = compute_metrics(eval_task, preds, out_label_ids)
         results.update(result)
 
-        output_eval_file = os.path.join(eval_output_dir, "eval_results.txt")
+        logger.info("***** Eval results {} *****".format(prefix))
+        for key in sorted(result.keys()):
+            logger.info("  %s = %s", key, str(result[key]))
+
+        output_eval_file = os.path.join(eval_output_dir, 'eval_results.txt')
         with open(output_eval_file, "w") as writer:
-            logger.info("***** Eval results {} *****".format(prefix))
-            for key in sorted(result.keys()):
-                logger.info("  %s = %s", key, str(result[key]))
-                writer.write("%s = %s\n" % (key, str(result[key])))
+            writer.write("%s \t %s\n" % (str(global_step), str(result['f1'])))
 
     return results
 
