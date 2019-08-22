@@ -21,6 +21,7 @@ import argparse
 import glob
 import logging
 import os
+import io
 import random
 
 import numpy as np
@@ -214,9 +215,11 @@ def train(args, train_dataset, model, tokenizer):
                 global_step += 1
 
                 # this part is changed
+                avg_loss = None
                 if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                     tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
-                    tb_writer.add_scalar('loss', (tr_loss - logging_loss)/args.logging_steps, global_step)
+                    avg_loss = (tr_loss - logging_loss) / args.logging_steps
+                    tb_writer.add_scalar('loss', tb_writer, global_step)
                     logging_loss = tr_loss
 
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
@@ -226,7 +229,13 @@ def train(args, train_dataset, model, tokenizer):
                         # Only evaluate when single GPU otherwise metrics may not average well
                         raise ValueError('Have to eval before saving model!')
 
-                    results = evaluate(args, model, tokenizer, global_step=global_step)
+                    results = evaluate(args, model, tokenizer)
+
+                    eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
+                    output_eval_file = os.path.join(eval_output_dir, 'eval_results.txt')
+                    with io.open(output_eval_file, "w") as writer:
+                        writer.write("%s \t %s \t %s\n" % (str(global_step), '{:.2f}'.format(avg_loss), '{:.2f}'.format(result['f1'])))
+
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
                         'k': global_step,
@@ -262,7 +271,7 @@ def train(args, train_dataset, model, tokenizer):
     return global_step, tr_loss / global_step
 
 
-def evaluate(args, model, tokenizer, global_step, prefix=""):
+def evaluate(args, model, tokenizer, prefix=""):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
     eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
     eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
@@ -319,10 +328,6 @@ def evaluate(args, model, tokenizer, global_step, prefix=""):
         logger.info("***** Eval results {} *****".format(prefix))
         for key in sorted(result.keys()):
             logger.info("  %s = %s", key, str(result[key]))
-
-        output_eval_file = os.path.join(eval_output_dir, 'eval_results.txt')
-        with open(output_eval_file, "w") as writer:
-            writer.write("%s \t %s\n" % (str(global_step), str(result['f1'])))
 
     return results
 
