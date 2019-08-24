@@ -26,6 +26,7 @@ from os.path import exists, join, dirname, abspath
 
 import io
 import random
+import shutil
 
 import numpy as np
 import torch
@@ -123,7 +124,8 @@ def clean_outdated_checkpoints(checkpoint, checkpoint_dict):
 
     for ckpt in ckpt_dirs:
         if ckpt not in target_ckpt_dirs:
-            os.remove(join(checkpoint, ckpt))
+            shutil.rmtree(join(checkpoint, ckpt))
+            # os.remove(join(checkpoint, ckpt))
             logger.info('Remove checkpoint: {}'.format(ckpt))
 
     ckpt_dirs = [dir for dir in listdir(checkpoint) if dir.startswith('checkpoint-')]
