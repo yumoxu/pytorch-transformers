@@ -240,7 +240,7 @@ def train(args, train_dataset, model, tokenizer):
 
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
                     with io.open(output_eval_file, 'a', encoding='utf-8') as writer:
-                        writer.write("%s\t%s\t%s\n" % (str(global_step), '{:.2f}'.format(avg_loss), '{:.2f}'.format(results['f1'])))
+                        writer.write("%s\t%s\t%s\n" % (str(global_step), '{:.4f}'.format(avg_loss), '{:.4f}'.format(results['f1'])))
 
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
