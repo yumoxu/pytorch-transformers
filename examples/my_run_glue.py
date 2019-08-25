@@ -522,6 +522,7 @@ def main():
     # todo: add here never_split
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case,
+                                                do_basic_tokenize=True,
                                                 never_split=['[unused1]', '[unused2]', '[unused3]', '[unused4]'])
 
     model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path), config=config)

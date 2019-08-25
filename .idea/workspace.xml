@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/my_run_glue.py" afterPath="$PROJECT_DIR$/examples/my_run_glue.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pytorch_transformers/tokenization_utils.py" afterPath="$PROJECT_DIR$/pytorch_transformers/tokenization_utils.py" />
-    </list>
+    <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="" />
     <ignored path="pytorch-transformers.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -28,8 +25,8 @@
       <file leaf-file-name="my_run_glue.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/my_run_glue.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6230848">
-              <caret line="524" column="109" selection-start-line="524" selection-start-column="109" selection-end-line="524" selection-end-column="109" />
+            <state vertical-scroll-proportion="0.58268934">
+              <caret line="577" column="39" selection-start-line="577" selection-start-column="39" selection-end-line="577" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -357,7 +354,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32969216" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -650,8 +647,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/my_run_glue.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6230848">
-          <caret line="524" column="109" selection-start-line="524" selection-start-column="109" selection-end-line="524" selection-end-column="109" />
+        <state vertical-scroll-proportion="0.58268934">
+          <caret line="577" column="39" selection-start-line="577" selection-start-column="39" selection-end-line="577" selection-end-column="39" />
           <folding />
         </state>
       </provider>
