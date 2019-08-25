@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="" />
+    <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/my_run_glue.py" afterPath="$PROJECT_DIR$/examples/my_run_glue.py" />
+    </list>
     <ignored path="pytorch-transformers.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -25,8 +28,8 @@
       <file leaf-file-name="my_run_glue.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/my_run_glue.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.58268934">
-              <caret line="577" column="39" selection-start-line="577" selection-start-column="39" selection-end-line="577" selection-end-column="39" />
+            <state vertical-scroll-proportion="0.7496136">
+              <caret line="530" column="52" selection-start-line="530" selection-start-column="52" selection-end-line="530" selection-end-column="52" />
               <folding />
             </state>
           </provider>
@@ -43,6 +46,7 @@
         <option value="$PROJECT_DIR$/run.sh" />
         <option value="$PROJECT_DIR$/examples/utils_glue.py" />
         <option value="$PROJECT_DIR$/pytorch_transformers/tokenization_utils.py" />
+        <option value="$PROJECT_DIR$/pytorch_transformers/tokenization_bert.py" />
         <option value="$PROJECT_DIR$/examples/my_run_glue.py" />
       </list>
     </option>
@@ -531,10 +535,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pytorch_transformers/tokenization_bert.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.1978362">
+          <caret line="102" column="33" selection-start-line="102" selection-start-column="33" selection-end-line="102" selection-end-column="33" />
+          <folding>
+            <marker date="1566484172453" expanded="false" signature="674:893" placeholder="import ..." />
+            <marker date="1566484172453" expanded="true" signature="3427:3738" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="3771:3949" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="3993:11266" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="3998:4779" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172453" expanded="true" signature="5218:7294" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="5227:6158" placeholder="&quot;&quot;&quot;Constructs a BertTokenizer....&quot;&quot;&quot;" />
+            <marker date="1566484172453" expanded="true" signature="7335:7366" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="7398:7793" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="7837:7979" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="8023:8171" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="8220:8386" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="8448:8734" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="8457:8617" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172453" expanded="true" signature="8810:9168" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="8819:8993" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172453" expanded="true" signature="9212:10013" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="10111:11266" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="11298:16948" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="11469:12352" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="11478:12148" placeholder="&quot;&quot;&quot;Constructs a BasicTokenizer....&quot;&quot;&quot;" />
+            <marker date="1566484172453" expanded="true" signature="12401:13928" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="12410:12836" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172453" expanded="true" signature="13969:14277" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="14336:14972" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="15018:15380" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="15417:16517" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="16551:16948" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="16984:18842" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="17096:17223" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="17254:18842" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="17263:17749" placeholder="&quot;&quot;&quot;Tokenizes a piece of text into its word pieces....&quot;&quot;&quot;" />
+            <marker date="1566484172453" expanded="true" signature="18870:19251" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="19276:19606" placeholder="..." />
+            <marker date="1566484172453" expanded="true" signature="19635:20180" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_transformers/tokenization_utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.56560636">
-          <caret line="255" column="85" selection-start-line="255" selection-start-column="85" selection-end-line="255" selection-end-column="85" />
+        <state vertical-scroll-proportion="0.42967543">
+          <caret line="179" column="0" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
           <folding>
             <marker date="1566484172455" expanded="false" signature="677:891" placeholder="import ..." />
             <marker date="1566484172455" expanded="true" signature="1058:33065" placeholder="..." />
@@ -601,54 +649,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pytorch_transformers/tokenization_bert.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.526047">
-          <caret line="226" column="13" selection-start-line="226" selection-start-column="13" selection-end-line="226" selection-end-column="13" />
-          <folding>
-            <marker date="1566484172453" expanded="false" signature="674:893" placeholder="import ..." />
-            <marker date="1566484172453" expanded="true" signature="3427:3738" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="3771:3949" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="3993:11266" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="3998:4779" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1566484172453" expanded="true" signature="5218:7294" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="5227:6158" placeholder="&quot;&quot;&quot;Constructs a BertTokenizer....&quot;&quot;&quot;" />
-            <marker date="1566484172453" expanded="true" signature="7335:7366" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="7398:7793" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="7837:7979" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="8023:8171" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="8220:8386" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="8448:8734" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="8457:8617" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1566484172453" expanded="true" signature="8810:9168" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="8819:8993" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1566484172453" expanded="true" signature="9212:10013" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="10111:11266" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="11298:16948" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="11469:12352" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="11478:12148" placeholder="&quot;&quot;&quot;Constructs a BasicTokenizer....&quot;&quot;&quot;" />
-            <marker date="1566484172453" expanded="true" signature="12401:13928" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="12410:12836" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1566484172453" expanded="true" signature="13969:14277" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="14336:14972" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="15018:15380" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="15417:16517" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="16551:16948" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="16984:18842" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="17096:17223" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="17254:18842" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="17263:17749" placeholder="&quot;&quot;&quot;Tokenizes a piece of text into its word pieces....&quot;&quot;&quot;" />
-            <marker date="1566484172453" expanded="true" signature="18870:19251" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="19276:19606" placeholder="..." />
-            <marker date="1566484172453" expanded="true" signature="19635:20180" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/my_run_glue.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.58268934">
-          <caret line="577" column="39" selection-start-line="577" selection-start-column="39" selection-end-line="577" selection-end-column="39" />
+        <state vertical-scroll-proportion="0.7496136">
+          <caret line="530" column="52" selection-start-line="530" selection-start-column="52" selection-end-line="530" selection-end-column="52" />
           <folding />
         </state>
       </provider>
