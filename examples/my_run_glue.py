@@ -526,10 +526,9 @@ def main():
                                                 additional_special_tokens=['[unused1]', '[unused2]', '[unused3]', '[unused4]'])
 
     # debug
-    print('[unused1]: {}'.format(tokenizer.convert_tokens_to_ids('[unused1]')))
-    print('UNK: {}'.format(tokenizer.convert_tokens_to_ids('UNK')))
-    assert False
-
+    # print('[unused1]: {}'.format(tokenizer.convert_tokens_to_ids('[unused1]')))
+    # print('UNK: {}'.format(tokenizer.convert_tokens_to_ids('UNK')))
+    # assert False
     model = model_class.from_pretrained(args.model_name_or_path, from_tf=bool('.ckpt' in args.model_name_or_path), config=config)
 
     if args.local_rank == 0:
