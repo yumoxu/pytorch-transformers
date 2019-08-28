@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/run_qas_shared.py" afterPath="$PROJECT_DIR$/examples/run_qas_shared.py" />
     </list>
     <ignored path="pytorch-transformers.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,21 +24,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="my_run_qas_passage.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/examples/my_run_qas_passage.py">
+      <file leaf-file-name="run_qas_shared.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7172619">
-              <caret line="351" column="26" selection-start-line="351" selection-start-column="26" selection-end-line="351" selection-end-column="26" />
+            <state vertical-scroll-proportion="0.85891473">
+              <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
               <folding>
                 <element signature="e#812#876#0" expanded="true" />
-                <element signature="e#2845#2849#0" expanded="false" />
-                <element signature="e#2875#3029#0" expanded="false" />
-                <element signature="e#3054#3114#0" expanded="false" />
-                <element signature="e#3152#3300#0" expanded="false" />
-                <element signature="e#3378#3996#0" expanded="false" />
-                <element signature="e#3378#3512#1" expanded="false" />
-                <element signature="e#4064#4616#0" expanded="false" />
-                <element signature="e#12115#14918#0" expanded="false" />
+                <element signature="e#2852#2856#0" expanded="false" />
+                <element signature="e#2882#3036#0" expanded="false" />
+                <element signature="e#3061#3121#0" expanded="false" />
+                <element signature="e#3159#3307#0" expanded="false" />
+                <element signature="e#3385#4003#0" expanded="false" />
+                <element signature="e#3385#3519#1" expanded="false" />
+                <element signature="e#4071#4623#0" expanded="false" />
+                <element signature="e#12122#14925#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -59,15 +59,16 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/run.sh" />
         <option value="$PROJECT_DIR$/examples/utils_glue.py" />
         <option value="$PROJECT_DIR$/pytorch_transformers/tokenization_utils.py" />
         <option value="$PROJECT_DIR$/pytorch_transformers/tokenization_bert.py" />
-        <option value="$PROJECT_DIR$/examples/my_utils_glue.py" />
         <option value="$PROJECT_DIR$/examples/my_run_glue.py" />
         <option value="$PROJECT_DIR$/pytorch_transformers/modeling_bert.py" />
         <option value="$PROJECT_DIR$/pytorch_transformers/__init__.py" />
         <option value="$PROJECT_DIR$/examples/my_run_qas_passage.py" />
+        <option value="$PROJECT_DIR$/run.sh" />
+        <option value="$PROJECT_DIR$/examples/my_utils_glue.py" />
+        <option value="$PROJECT_DIR$/examples/run_qas_shared.py" />
       </list>
     </option>
   </component>
@@ -164,7 +165,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
-    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/examples/my_run_qas_passage.py&#10;bert&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/pytorch_transformers/tokenization_bert.py" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/examples/run_qas_shared.py&#10;bert&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/pytorch_transformers/tokenization_bert.py" />
     <property name="FullScreen" value="true" />
   </component>
   <component name="RecentsManager">
@@ -398,18 +399,18 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935324" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935324" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33034825" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33034825" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
@@ -430,14 +431,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/run.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31256384">
-          <caret line="17" column="34" selection-start-line="17" selection-start-column="34" selection-end-line="17" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/examples/utils_glue.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5357853">
@@ -733,10 +726,137 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pytorch_transformers/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.25793245">
+          <caret line="14" column="40" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="40" />
+          <folding>
+            <marker date="1567011805005" expanded="true" signature="22:3396" placeholder="import ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/run_qas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.25099602">
+          <caret line="14" column="32" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
+          <folding>
+            <marker date="1567007270575" expanded="false" signature="812:2131" placeholder="import ..." />
+            <marker date="1567007270575" expanded="false" signature="2771:2780" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="2801:2960" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="2980:3045" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="3078:3231" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="3304:3927" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="3309:3443" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1567007270575" expanded="false" signature="3990:4547" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="4599:11990" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="12041:14849" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="14919:18034" placeholder="..." />
+            <marker date="1567007270575" expanded="false" signature="18048:29619" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.38689867">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/my_utils_glue.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.604651">
+          <caret line="635" column="36" selection-start-line="635" selection-start-column="36" selection-end-line="635" selection-end-column="36" />
+          <folding>
+            <marker date="1567012432688" expanded="false" signature="785:1018" placeholder="import ..." />
+            <marker date="1567012432688" expanded="false" signature="1086:1896" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="1227:1896" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="1236:1786" placeholder="&quot;&quot;&quot;Constructs a InputExample....&quot;&quot;&quot;" />
+            <marker date="1567012432688" expanded="false" signature="1927:2186" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="2042:2186" placeholder="..." />
+            <marker date="1567012432688" expanded="true" signature="2217:3201" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="2342:2448" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="2491:2595" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="2622:2715" placeholder="..." />
+            <marker date="1567012432688" expanded="true" signature="2785:3201" placeholder="..." />
+            <marker date="1567012432688" expanded="true" signature="3239:4371" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="3342:3565" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="3608:3746" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="3773:3829" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="3879:4371" placeholder="..." />
+            <marker date="1567012432688" expanded="true" signature="4414:6010" placeholder="..." />
+            <marker date="1567012432688" expanded="true" signature="4508:4731" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="4774:4912" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="4939:4995" placeholder="..." />
+            <marker date="1567012432688" expanded="true" signature="5056:6010" placeholder="..." />
+            <marker date="1567012432688" expanded="true" signature="5065:5200" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1567012432688" expanded="false" signature="6048:7119" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="6155:6297" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="6340:6506" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="6533:6621" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="6671:7119" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="7167:7452" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="7283:7452" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="7490:8411" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="7593:7735" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="7778:7916" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="7943:7999" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="8049:8411" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="8449:9419" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="8553:8695" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="8738:8876" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="8903:8959" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="9009:9419" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="9457:10461" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="9561:9703" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="9746:9884" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="9911:9963" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="10013:10461" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="10498:11588" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="10600:10742" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="10785:10923" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="10950:11006" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="11056:11588" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="11626:12675" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="11729:11871" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="11914:12072" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="12099:12177" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="12227:12675" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="12712:13740" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="12814:12956" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="12999:13137" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="13164:13242" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="13292:13740" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="13778:14785" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="13881:14023" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="14066:14204" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="14231:14287" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="14337:14785" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="15523:20747" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="15528:15907" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1567012432688" expanded="false" signature="20805:21431" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="21469:21505" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="21538:21721" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="21764:21998" placeholder="..." />
+            <marker date="1567012432688" expanded="false" signature="22047:23019" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_transformers/modeling_answer_selection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4790174">
-          <caret line="64" column="61" selection-start-line="64" selection-start-column="61" selection-end-line="64" selection-end-column="61" />
+        <state vertical-scroll-proportion="0.6511628">
+          <caret line="1180" column="28" selection-start-line="1180" selection-start-column="28" selection-end-line="1180" selection-end-column="28" />
           <folding>
             <marker date="1567011586000" expanded="false" signature="737:1145" placeholder="import ..." />
             <marker date="1567011586000" expanded="false" signature="4862:7474" placeholder="..." />
@@ -828,7 +948,7 @@
             <marker date="1567011586000" expanded="false" signature="52245:56751" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
             <marker date="1567011586000" expanded="false" signature="56783:57042" placeholder="..." />
             <marker date="1567011586000" expanded="false" signature="57183:58379" placeholder="..." />
-            <marker date="1567011586000" expanded="false" signature="58651:65039" placeholder="..." />
+            <marker date="1567011586000" expanded="true" signature="58651:65039" placeholder="..." />
             <marker date="1567011586000" expanded="false" signature="58656:63126" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
             <marker date="1567011586000" expanded="false" signature="63158:63424" placeholder="..." />
             <marker date="1567011586000" expanded="false" signature="63629:65039" placeholder="..." />
@@ -844,139 +964,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pytorch_transformers/__init__.py">
+    <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.25793245">
-          <caret line="14" column="40" selection-start-line="14" selection-start-column="40" selection-end-line="14" selection-end-column="40" />
-          <folding>
-            <marker date="1567011805005" expanded="true" signature="22:3396" placeholder="import ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/my_utils_glue.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.5557768">
-          <caret line="166" column="0" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
-          <folding>
-            <marker date="1567005498804" expanded="false" signature="785:1018" placeholder="import ..." />
-            <marker date="1567005498804" expanded="false" signature="1086:1896" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="1227:1896" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="1236:1786" placeholder="&quot;&quot;&quot;Constructs a InputExample....&quot;&quot;&quot;" />
-            <marker date="1567005498804" expanded="false" signature="1927:2186" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="2042:2186" placeholder="..." />
-            <marker date="1567005498804" expanded="true" signature="2217:3201" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="2342:2448" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="2491:2595" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="2622:2715" placeholder="..." />
-            <marker date="1567005498804" expanded="true" signature="2785:3201" placeholder="..." />
-            <marker date="1567005498804" expanded="true" signature="3239:4371" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="3342:3565" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="3608:3746" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="3773:3829" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="3879:4371" placeholder="..." />
-            <marker date="1567005498804" expanded="true" signature="4416:6012" placeholder="..." />
-            <marker date="1567005498804" expanded="true" signature="4510:4733" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="4776:4914" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="4941:4997" placeholder="..." />
-            <marker date="1567005498804" expanded="true" signature="5058:6012" placeholder="..." />
-            <marker date="1567005498804" expanded="true" signature="5067:5202" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1567005498804" expanded="false" signature="6050:7121" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="6157:6299" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="6342:6508" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="6535:6623" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="6673:7121" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="7169:7454" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="7285:7454" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="7492:8413" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="7595:7737" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="7780:7918" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="7945:8001" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="8051:8413" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="8451:9421" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="8555:8697" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="8740:8878" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="8905:8961" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="9011:9421" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="9459:10463" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="9563:9705" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="9748:9886" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="9913:9965" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="10015:10463" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="10500:11590" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="10602:10744" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="10787:10925" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="10952:11008" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="11058:11590" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="11628:12677" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="11731:11873" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="11916:12074" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="12101:12179" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="12229:12677" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="12714:13742" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="12816:12958" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="13001:13139" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="13166:13244" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="13294:13742" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="13780:14787" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="13883:14025" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="14068:14206" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="14233:14289" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="14339:14787" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="15525:20749" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="15530:15909" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1567005498804" expanded="false" signature="20807:21433" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="21471:21507" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="21540:21723" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="21766:22000" placeholder="..." />
-            <marker date="1567005498804" expanded="false" signature="22049:23021" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/my_run_glue.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.25099602">
-          <caret line="14" column="32" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
-          <folding>
-            <marker date="1567007270575" expanded="false" signature="812:2131" placeholder="import ..." />
-            <marker date="1567007270575" expanded="false" signature="2771:2780" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="2801:2960" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="2980:3045" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="3078:3231" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="3304:3927" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="3309:3443" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
-            <marker date="1567007270575" expanded="false" signature="3990:4547" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="4599:11990" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="12041:14849" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="14919:18034" placeholder="..." />
-            <marker date="1567007270575" expanded="false" signature="18048:29619" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/my_run_qas_passage.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7172619">
-          <caret line="351" column="26" selection-start-line="351" selection-start-column="26" selection-end-line="351" selection-end-column="26" />
+        <state vertical-scroll-proportion="0.85891473">
+          <caret line="60" column="0" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
           <folding>
             <element signature="e#812#876#0" expanded="true" />
-            <element signature="e#2845#2849#0" expanded="false" />
-            <element signature="e#2875#3029#0" expanded="false" />
-            <element signature="e#3054#3114#0" expanded="false" />
-            <element signature="e#3152#3300#0" expanded="false" />
-            <element signature="e#3378#3996#0" expanded="false" />
-            <element signature="e#3378#3512#1" expanded="false" />
-            <element signature="e#4064#4616#0" expanded="false" />
-            <element signature="e#12115#14918#0" expanded="false" />
+            <element signature="e#2852#2856#0" expanded="false" />
+            <element signature="e#2882#3036#0" expanded="false" />
+            <element signature="e#3061#3121#0" expanded="false" />
+            <element signature="e#3159#3307#0" expanded="false" />
+            <element signature="e#3385#4003#0" expanded="false" />
+            <element signature="e#3385#3519#1" expanded="false" />
+            <element signature="e#4071#4623#0" expanded="false" />
+            <element signature="e#12122#14925#0" expanded="false" />
           </folding>
         </state>
       </provider>
