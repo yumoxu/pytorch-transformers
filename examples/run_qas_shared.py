@@ -40,7 +40,7 @@ from torch.nn.utils.rnn import pad_sequence
 from torch.nn import CrossEntropyLoss, MSELoss
 
 from tqdm import tqdm, trange
-import sys
+# import sys
 import os
 
 # sys.path.insert(0, os.path.abspath('../pytorch_transformers'))
@@ -57,7 +57,7 @@ from pytorch_transformers.modeling_bert import BertPreTrainedModel
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from .my_utils_glue import (compute_metrics, convert_examples_to_features, output_modes, processors)
+from my_utils_glue import (compute_metrics, convert_examples_to_features, output_modes, processors)
 
 logger = logging.getLogger(__name__)
 
