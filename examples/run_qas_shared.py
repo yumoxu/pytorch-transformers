@@ -37,11 +37,7 @@ from tensorboardX import SummaryWriter
 from torch.nn.utils.rnn import pad_sequence
 
 from tqdm import tqdm, trange
-from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
-                                  BertForSequenceClassification, BertForSharedAnswerSelection, BertTokenizer,
-                                  # RobertaConfig,
-                                  # RobertaForSequenceClassification,
-                                  # RobertaTokenizer,
+from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertForSharedAnswerSelection, BertTokenizer,
                                   XLMConfig, XLMForSequenceClassification,
                                   XLMTokenizer, XLNetConfig,
                                   XLNetForSequenceClassification,
