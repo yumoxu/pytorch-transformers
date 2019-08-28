@@ -49,4 +49,4 @@ from .optimization import (AdamW, ConstantLRSchedule, WarmupConstantSchedule, Wa
 
 from .file_utils import (PYTORCH_TRANSFORMERS_CACHE, PYTORCH_PRETRAINED_BERT_CACHE, cached_path)
 
-# from .modeling_answer_selection import (BertForSharedAnswerSelection)
+import modeling_answer_selection
