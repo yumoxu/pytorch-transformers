@@ -47,15 +47,14 @@ import os
 # print('sys.path: {}'.format(sys.path))
 
 from pytorch_transformers import (WEIGHTS_NAME,
-                                  BertConfig, BertModel, BertTokenizer,
+                                  BertTokenizer,
                                   XLMConfig, XLMForSequenceClassification,
                                   XLMTokenizer, XLNetConfig,
                                   XLNetForSequenceClassification,
                                   XLNetTokenizer)
 
-from pytorch_transformers.modeling_bert import BertPreTrainedModel
-
 from pytorch_transformers import AdamW, WarmupLinearSchedule
+from pytorch_transformers.modeling_bert import (BertConfig, BertPreTrainedModel, BertModel)
 
 from my_utils_glue import (compute_metrics, convert_examples_to_features, output_modes, processors)
 
