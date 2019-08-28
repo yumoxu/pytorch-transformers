@@ -43,10 +43,10 @@ from tqdm import tqdm, trange
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath('../pytorch_transformers/pytorch_transformers'))
-print('sys.path: {}'.format(sys.path))
+# sys.path.insert(0, os.path.abspath('../pytorch_transformers/pytorch_transformers'))
+# print('sys.path: {}'.format(sys.path))
 
-from pytorch_transformers import (WEIGHTS_NAME,
+from ..pytorch_transformers import (WEIGHTS_NAME,
                                   BertConfig, BertPreTrainedModel, BertModel, BertTokenizer,
                                   XLMConfig, XLMForSequenceClassification,
                                   XLMTokenizer, XLNetConfig,
