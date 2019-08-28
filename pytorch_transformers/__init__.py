@@ -15,6 +15,7 @@ from .modeling_auto import (AutoConfig, AutoModel)
 from .modeling_bert import (BertConfig, BertPreTrainedModel, BertModel, BertForPreTraining,
                             BertForMaskedLM, BertForNextSentencePrediction,
                             BertForSequenceClassification, BertForMultipleChoice,
+                            BertForSharedAnswerSelection,
                             BertForTokenClassification, BertForQuestionAnswering,
                             load_tf_weights_in_bert, BERT_PRETRAINED_MODEL_ARCHIVE_MAP,
                             BERT_PRETRAINED_CONFIG_ARCHIVE_MAP)
@@ -48,4 +49,4 @@ from .optimization import (AdamW, ConstantLRSchedule, WarmupConstantSchedule, Wa
 
 from .file_utils import (PYTORCH_TRANSFORMERS_CACHE, PYTORCH_PRETRAINED_BERT_CACHE, cached_path)
 
-from .modeling_answer_selection import (BertForSharedAnswerSelection)
+# from .modeling_answer_selection import (BertForSharedAnswerSelection)
