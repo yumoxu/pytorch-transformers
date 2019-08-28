@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pytorch_transformers/__init__.py" afterPath="$PROJECT_DIR$/pytorch_transformers/__init__.py" />
     </list>
     <ignored path="pytorch-transformers.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -24,20 +25,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="run_qas_shared.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pytorch_transformers/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.55503875">
-              <caret line="45" column="51" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
+            <state vertical-scroll-proportion="0.80465114">
+              <caret line="51" column="32" selection-start-line="51" selection-start-column="32" selection-end-line="51" selection-end-column="32" />
               <folding>
-                <element signature="e#2668#2672#0" expanded="false" />
-                <element signature="e#2698#2852#0" expanded="false" />
-                <element signature="e#2877#2937#0" expanded="false" />
-                <element signature="e#2975#3123#0" expanded="false" />
-                <element signature="e#3201#3819#0" expanded="false" />
-                <element signature="e#3201#3335#1" expanded="false" />
-                <element signature="e#3887#4439#0" expanded="false" />
-                <element signature="e#11938#14741#0" expanded="false" />
+                <element signature="e#22#66#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -65,9 +59,9 @@
         <option value="$PROJECT_DIR$/examples/my_run_qas_passage.py" />
         <option value="$PROJECT_DIR$/run.sh" />
         <option value="$PROJECT_DIR$/examples/my_utils_glue.py" />
-        <option value="$PROJECT_DIR$/pytorch_transformers/__init__.py" />
         <option value="$PROJECT_DIR$/pytorch_transformers/modeling_bert.py" />
         <option value="$PROJECT_DIR$/examples/run_qas_shared.py" />
+        <option value="$PROJECT_DIR$/pytorch_transformers/__init__.py" />
       </list>
     </option>
   </component>
@@ -392,7 +386,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1280" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19648562" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -403,7 +397,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935324" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33034825" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33034825" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -846,9 +840,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.55503875">
+          <caret line="45" column="32" selection-start-line="45" selection-start-column="26" selection-end-line="45" selection-end-column="51" />
+          <folding>
+            <marker date="1567020043018" expanded="true" signature="812:1950" placeholder="import ..." />
+            <marker date="1567020043018" expanded="false" signature="2663:2672" placeholder="..." />
+            <marker date="1567020043018" expanded="false" signature="2693:2852" placeholder="..." />
+            <marker date="1567020043018" expanded="false" signature="2872:2937" placeholder="..." />
+            <marker date="1567020043018" expanded="false" signature="2970:3123" placeholder="..." />
+            <marker date="1567020043018" expanded="false" signature="3196:3819" placeholder="..." />
+            <marker date="1567020043018" expanded="false" signature="3201:3335" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1567020043018" expanded="false" signature="3882:4439" placeholder="..." />
+            <marker date="1567020043018" expanded="true" signature="4491:11882" placeholder="..." />
+            <marker date="1567020043018" expanded="false" signature="11933:14741" placeholder="..." />
+            <marker date="1567020043018" expanded="true" signature="14811:19127" placeholder="..." />
+            <marker date="1567020043018" expanded="true" signature="19141:30712" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_transformers/modeling_answer_selection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5860465">
+        <state vertical-scroll-proportion="0.55503875">
           <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
           <folding>
             <marker date="1567011586000" expanded="true" signature="737:1145" placeholder="import ..." />
@@ -959,7 +974,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_transformers/__main__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.47906977">
+        <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <marker date="1566484172426" expanded="true" signature="26:6981" placeholder="..." />
@@ -969,27 +984,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_transformers/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.66964287">
-          <caret line="25" column="62" selection-start-line="25" selection-start-column="62" selection-end-line="25" selection-end-column="62" />
+        <state vertical-scroll-proportion="0.80465114">
+          <caret line="51" column="32" selection-start-line="51" selection-start-column="32" selection-end-line="51" selection-end-column="32" />
           <folding>
-            <marker date="1567013184776" expanded="true" signature="22:3383" placeholder="import ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.55503875">
-          <caret line="45" column="51" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
-          <folding>
-            <element signature="e#2668#2672#0" expanded="false" />
-            <element signature="e#2698#2852#0" expanded="false" />
-            <element signature="e#2877#2937#0" expanded="false" />
-            <element signature="e#2975#3123#0" expanded="false" />
-            <element signature="e#3201#3819#0" expanded="false" />
-            <element signature="e#3201#3335#1" expanded="false" />
-            <element signature="e#3887#4439#0" expanded="false" />
-            <element signature="e#11938#14741#0" expanded="false" />
+            <element signature="e#22#66#0" expanded="true" />
           </folding>
         </state>
       </provider>
