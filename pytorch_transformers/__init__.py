@@ -12,6 +12,8 @@ from .tokenization_utils import (PreTrainedTokenizer)
 
 from .modeling_auto import (AutoConfig, AutoModel)
 
+from .modeling_answer_selection import (BertForSharedAnswerSelection)
+
 from .modeling_bert import (BertConfig, BertPreTrainedModel, BertModel, BertForPreTraining,
                             BertForMaskedLM, BertForNextSentencePrediction,
                             BertForSequenceClassification, BertForMultipleChoice,

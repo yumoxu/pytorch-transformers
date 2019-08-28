@@ -41,7 +41,7 @@ from tqdm import tqdm, trange
 
 
 from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
-                                  BertForSequenceClassification, BertTokenizer,
+                                  BertForSequenceClassification, BertForSharedAnswerSelection, BertTokenizer,
                                   # RobertaConfig,
                                   # RobertaForSequenceClassification,
                                   # RobertaTokenizer,
@@ -52,8 +52,7 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from my_utils_glue import (compute_metrics, convert_examples_to_features,
-                           output_modes, processors)
+from my_utils_glue import (compute_metrics, convert_examples_to_features, output_modes, processors)
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +60,8 @@ logger = logging.getLogger(__name__)
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig)), ())
 
 MODEL_CLASSES = {
-    'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
+    # 'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
+    'bert': (BertConfig, BertForMultipleChoice, BertTokenizer),
     'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
     # 'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
@@ -348,7 +348,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     processor = processors[task]()
     output_mode = output_modes[task]
     # Load data features from cache or dataset file
-    cached_features_file = os.path.join(args.data_dir, 'cached_{}_{}_{}_{}'.format(
+    cached_features_file = os.path.join(args.data_dir, 'cached_passage_{}_{}_{}_{}'.format(
         'dev' if evaluate else 'train',
         list(filter(None, args.model_name_or_path.split('/'))).pop(),
         str(args.max_seq_length),
@@ -363,16 +363,21 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
             # HACK(label indices are swapped in RoBERTa pretrained model)
             label_list[1], label_list[2] = label_list[2], label_list[1]
         examples = processor.get_dev_examples(args.data_dir) if evaluate else processor.get_train_examples(args.data_dir)
-        features = convert_examples_to_features(examples, label_list, args.max_seq_length, tokenizer, output_mode,
-            cls_token_at_end=bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
-            cls_token=tokenizer.cls_token,
-            cls_token_segment_id=2 if args.model_type in ['xlnet'] else 0,
-            sep_token=tokenizer.sep_token,
-            sep_token_extra=bool(args.model_type in ['roberta']),           # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
-            pad_on_left=bool(args.model_type in ['xlnet']),                 # pad on the left for xlnet
-            pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
-            pad_token_segment_id=4 if args.model_type in ['xlnet'] else 0,
-        )
+        features = []
+        for passage_examples in examples:
+            passage_features = convert_examples_to_features(
+                passage_examples, label_list, args.max_seq_length, tokenizer, output_mode,
+                cls_token_at_end=bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
+                cls_token=tokenizer.cls_token,
+                cls_token_segment_id=2 if args.model_type in ['xlnet'] else 0,
+                sep_token=tokenizer.sep_token,
+                sep_token_extra=bool(args.model_type in ['roberta']),           # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+                pad_on_left=bool(args.model_type in ['xlnet']),                 # pad on the left for xlnet
+                pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
+                pad_token_segment_id=4 if args.model_type in ['xlnet'] else 0,
+            )
+            features.append(passage_features)
+
         if args.local_rank in [-1, 0]:
             logger.info("Saving features into cached file %s", cached_features_file)
             torch.save(features, cached_features_file)
@@ -381,15 +386,38 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
 
     # Convert to Tensors and build dataset
-    all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
-    all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)
-    all_segment_ids = torch.tensor([f.segment_ids for f in features], dtype=torch.long)
-    if output_mode == "classification":
-        all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.long)
-    elif output_mode == "regression":
-        all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.float)
+    all_input_ids_list, all_input_mask_list, all_segment_ids_list, all_label_ids_list = [], [], [], []
+    sent_mask_list = []
 
-    dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+    for passage_features in features:
+        all_input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
+        all_input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
+        all_segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
+
+        sent_mask = torch.tensor([1.0] * len(passage_features), atype=torch.long)
+
+        if output_mode == "classification":
+            all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
+        elif output_mode == "regression":
+            all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.float)
+
+        all_input_ids_list.append(all_input_ids)
+        all_input_mask_list.append(all_input_mask)
+        all_segment_ids_list.append(all_segment_ids)
+        all_label_ids_list.append(all_label_ids)
+        sent_mask_list.append(sent_mask)
+
+    input_ids_padded = pad_sequence(all_input_ids_list)
+    input_mask_padded = pad_sequence(all_input_mask_list)
+    segment_ids_padded = pad_sequence(all_segment_ids_list)
+    label_ids_padded = pad_sequence(all_label_ids_list)
+    sent_mask_padded = pad_sequence(sent_mask_list)
+
+    print('input_ids_padded: {}'.format(input_ids_padded.size()))
+    print('sent_mask_padded: {}'.format(sent_mask_padded.size()))
+
+    dataset = TensorDataset(input_ids_padded, input_mask_padded, segment_ids_padded, label_ids_padded, sent_mask_padded)
+
     return dataset
 
 
