@@ -122,7 +122,7 @@ class MrpcProcessor(DataProcessor):
         return examples
 
 
-class QasPasssageProcessor(DataProcessor):
+class QasSharedProcessor(DataProcessor):
     """Processor for the QAS Passage data set."""
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -633,7 +633,7 @@ processors = {
     "mnli": MnliProcessor,
     "mnli-mm": MnliMismatchedProcessor,
     "qas": MrpcProcessor,
-    "qas-passage": QasPasssageProcessor,
+    "qas-shared": QasSharedProcessor,
     "mrpc": MrpcProcessor,
     "sst-2": Sst2Processor,
     "sts-b": StsbProcessor,
@@ -648,7 +648,7 @@ output_modes = {
     "mnli": "classification",
     "mnli-mm": "classification",
     "qas": "classification",
-    "qas-passage": "regression",
+    "qas-shared": "regression",
     "mrpc": "classification",
     "sst-2": "classification",
     "sts-b": "regression",
@@ -662,7 +662,7 @@ GLUE_TASKS_NUM_LABELS = {
     "cola": 2,
     "mnli": 3,
     "qas": 2,
-    "qas-passage": 1,
+    "qas-shared": 1,
     "mrpc": 2,
     "sst-2": 2,
     "sts-b": 1,
