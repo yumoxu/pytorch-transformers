@@ -994,7 +994,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
 @add_start_docstrings("""Bert Model with a multiple choice classification head on top (a linear layer on top of
     the pooled output and a softmax) e.g. for RocStories/SWAG tasks. """,
     BERT_START_DOCSTRING)
-class BertForMultipleChoice(BertPreTrainedModel):
+class BertForSharedAnswerSelection(BertPreTrainedModel):
     r"""
     Inputs:
         **input_ids**: ``torch.LongTensor`` of shape ``(batch_size, num_choices, sequence_length)``:
@@ -1063,7 +1063,7 @@ class BertForMultipleChoice(BertPreTrainedModel):
 
     """
     def __init__(self, config):
-        super(BertForMultipleChoice, self).__init__(config)
+        super(BertForSharedAnswerSelection, self).__init__(config)
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
@@ -1100,7 +1100,7 @@ class BertForMultipleChoice(BertPreTrainedModel):
 @add_start_docstrings("""Bert Model with a multiple choice classification head on top (a linear layer on top of
     the pooled output and a softmax) e.g. for Answer Selection tasks. """,
     BERT_START_DOCSTRING)
-class BertForSharedAnswerSelection(BertPreTrainedModel):
+class BertForMultipleChoice(BertPreTrainedModel):
     r"""
     Inputs:
         **input_ids**: ``torch.LongTensor`` of shape ``(batch_size, num_choices, sequence_length)``:
@@ -1169,7 +1169,7 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
 
     """
     def __init__(self, config):
-        super(BertForSharedAnswerSelection, self).__init__(config)
+        super(BertForMultipleChoice, self).__init__(config)
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)

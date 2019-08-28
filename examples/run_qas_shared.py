@@ -37,13 +37,12 @@ from tensorboardX import SummaryWriter
 from torch.nn.utils.rnn import pad_sequence
 
 from tqdm import tqdm, trange
-from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertTokenizer,
+from pytorch_transformers import (WEIGHTS_NAME,
+                                  BertConfig, BertForMultipleChoice, BertTokenizer,
                                   XLMConfig, XLMForSequenceClassification,
                                   XLMTokenizer, XLNetConfig,
                                   XLNetForSequenceClassification,
                                   XLNetTokenizer)
-
-from pytorch_transformers.modeling_answer_selection import BertForSharedAnswerSelection
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
