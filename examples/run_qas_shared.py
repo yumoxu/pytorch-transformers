@@ -55,7 +55,7 @@ ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (
 
 MODEL_CLASSES = {
     # 'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
-    'bert': (BertConfig, BertForSharedAnswerSelection, BertTokenizer),
+    'bert': (BertConfig, BertForMultipleChoice, BertTokenizer),
     'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
     # 'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
