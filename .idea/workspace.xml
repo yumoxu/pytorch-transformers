@@ -28,18 +28,17 @@
       <file leaf-file-name="run_qas_shared.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.509915">
+            <state vertical-scroll-proportion="0.194051">
               <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
               <folding>
                 <element signature="e#812#876#0" expanded="true" />
-                <element signature="e#2512#8897#0" expanded="false" />
-                <element signature="e#2512#6982#1" expanded="false" />
-                <element signature="e#9233#9387#0" expanded="false" />
-                <element signature="e#9412#9472#0" expanded="false" />
-                <element signature="e#9510#9658#0" expanded="false" />
-                <element signature="e#9736#10354#0" expanded="false" />
-                <element signature="e#9736#9870#1" expanded="false" />
-                <element signature="e#10422#10974#0" expanded="false" />
+                <element signature="e#2536#7006#1" expanded="false" />
+                <element signature="e#9257#9411#0" expanded="false" />
+                <element signature="e#9436#9496#0" expanded="false" />
+                <element signature="e#9534#9682#0" expanded="false" />
+                <element signature="e#9760#10378#0" expanded="false" />
+                <element signature="e#9760#9894#1" expanded="false" />
+                <element signature="e#10446#10998#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -395,7 +394,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1280" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19648562" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -406,7 +405,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935324" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26965174" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26965174" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -783,10 +782,87 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pytorch_transformers/modeling_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5609065">
+          <caret line="239" column="47" selection-start-line="239" selection-start-column="47" selection-end-line="239" selection-end-column="47" />
+          <folding>
+            <marker date="1566484172435" expanded="false" signature="736:1072" placeholder="import ..." />
+            <marker date="1566484172435" expanded="false" signature="1331:1567" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="1462:1507" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="1542:1567" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="1624:1772" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="1661:1737" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="1874:1968" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="1911:1933" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="2002:11230" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="2007:3336" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="3410:3741" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="3789:4336" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="3798:4003" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="4425:9987" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="4434:7624" placeholder="&quot;&quot;&quot;Instantiate a :class:`~pytorch_transformers.PretrainedConfig` (or a derived class) from a pre-trained model configuration....&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="10042:10284" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="10342:10557" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="10587:10634" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="10659:10701" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="10725:10856" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="10887:11019" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="11064:11230" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="11266:29597" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="11271:12638" placeholder="&quot;&quot;&quot;Base class for all models....&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="12834:13359" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="13436:14937" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="13445:14176" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="15004:15291" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="15352:16607" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="15361:16079" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="16651:17047" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="16660:16902" placeholder="&quot;&quot;&quot;Prunes heads of the base model....&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="17095:17901" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="17104:17303" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="18003:29597" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="18012:23532" placeholder="&quot;&quot;&quot;Instantiate a pretrained pytorch model from a pre-trained model configuration....&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="27644:28021" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="29624:30250" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="29656:30058" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="29665:29841" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="30085:30250" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="30288:30953" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="30388:30492" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="30544:30953" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="30553:30804" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="30989:33016" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="31120:31422" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="31515:33016" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="31524:32241" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="33054:35201" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="33181:33412" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="33508:35201" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="33517:34313" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="35231:42043" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="35236:38221" placeholder="&quot;&quot;&quot;A SQuAD head inspired by XLNet....&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="38253:38542" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="38688:42043" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="42079:46355" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="42084:43146" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="43178:44680" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="44735:46355" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="44744:45236" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="46402:47350" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="46407:46593" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="47397:48311" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="47402:47676" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1566484172435" expanded="false" signature="48354:48881" placeholder="..." />
+            <marker date="1566484172435" expanded="false" signature="48359:48558" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_transformers/modeling_bert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5402456">
-          <caret line="23" column="10" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
+        <state vertical-scroll-proportion="0.611898">
+          <caret line="542" column="54" selection-start-line="542" selection-start-column="54" selection-end-line="542" selection-end-column="54" />
           <folding>
             <marker date="1567020583126" expanded="true" signature="737:1145" placeholder="import ..." />
             <marker date="1567020583126" expanded="false" signature="4862:7474" placeholder="..." />
@@ -896,18 +972,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.509915">
+        <state vertical-scroll-proportion="0.194051">
           <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
           <folding>
             <element signature="e#812#876#0" expanded="true" />
-            <element signature="e#2512#8897#0" expanded="false" />
-            <element signature="e#2512#6982#1" expanded="false" />
-            <element signature="e#9233#9387#0" expanded="false" />
-            <element signature="e#9412#9472#0" expanded="false" />
-            <element signature="e#9510#9658#0" expanded="false" />
-            <element signature="e#9736#10354#0" expanded="false" />
-            <element signature="e#9736#9870#1" expanded="false" />
-            <element signature="e#10422#10974#0" expanded="false" />
+            <element signature="e#2536#7006#1" expanded="false" />
+            <element signature="e#9257#9411#0" expanded="false" />
+            <element signature="e#9436#9496#0" expanded="false" />
+            <element signature="e#9534#9682#0" expanded="false" />
+            <element signature="e#9760#10378#0" expanded="false" />
+            <element signature="e#9760#9894#1" expanded="false" />
+            <element signature="e#10446#10998#0" expanded="false" />
           </folding>
         </state>
       </provider>
