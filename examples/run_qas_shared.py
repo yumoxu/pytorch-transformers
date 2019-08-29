@@ -139,6 +139,7 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         self.classifier = nn.Linear(config.hidden_size, 1)
 
         self.apply(self.init_weights)
+        self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None,
                 labels=None,
@@ -159,16 +160,24 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
 
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
+
         reshaped_logits = logits.view(-1, num_choices)
-
         reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
-
-        outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
+        normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
 
         if labels is not None:
-            loss_fct = CrossEntropyLoss()
-            loss = loss_fct(reshaped_logits, labels)
+            loss_fct = MSELoss()
+            loss = loss_fct(normed_scores.view(-1), labels.view(-1))
             outputs = (loss,) + outputs
+
+        # reshaped_logits = logits.view(-1, num_choices)
+        # reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
+        # outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
+
+        # if labels is not None:
+            # loss_fct = CrossEntropyLoss()
+            # loss = loss_fct(reshaped_logits, labels)
+            # outputs = (loss,) + outputs
 
         return outputs  # (loss), reshaped_logits, (hidden_states), (attentions)
 
@@ -505,10 +514,8 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         all_input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
 
-        sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.bool)
-
-
         all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
+        sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.bool)
         # if output_mode == "classification":
         #     all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
         # elif output_mode == "regression":
