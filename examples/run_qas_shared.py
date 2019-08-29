@@ -163,7 +163,7 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         logits = self.classifier(pooled_output)
         reshaped_logits = logits.view(-1, num_choices)
 
-        reshaped_logits = reshaped_logits.masked_fill(sent_mask == 0.0, -1e9)
+        reshaped_logits = reshaped_logits.masked_fill(sent_mask==0, -1e9)
 
         outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
 
@@ -499,13 +499,13 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     all_input_ids_list, all_input_mask_list, all_segment_ids_list, all_label_ids_list = [], [], [], []
     sent_mask_list = []
 
-    logger.info('loading passage-level features')
+    # logger.info('Loading passage-level features')
     for passage_features in tqdm(features):
         all_input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
 
-        sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.long)
+        sent_mask = torch.tensor([1] * len(passage_features))
 
         if output_mode == "classification":
             all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
