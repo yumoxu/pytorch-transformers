@@ -459,7 +459,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     processor = processors[task]()
     output_mode = output_modes[task]
     # Load data features from cache or dataset file
-    cached_features_file = os.path.join(args.data_dir, 'cached_passage_{}_{}_{}_{}'.format(
+    cached_features_file = os.path.join(args.data_dir, 'cached_shared_{}_{}_{}_{}'.format(
         'dev' if evaluate else 'train',
         list(filter(None, args.model_name_or_path.split('/'))).pop(),
         str(args.max_seq_length),
@@ -519,11 +519,11 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         all_label_ids_list.append(all_label_ids)
         sent_mask_list.append(sent_mask)
 
-    input_ids_padded = pad_sequence(all_input_ids_list)
-    input_mask_padded = pad_sequence(all_input_mask_list)
-    segment_ids_padded = pad_sequence(all_segment_ids_list)
-    label_ids_padded = pad_sequence(all_label_ids_list)
-    sent_mask_padded = pad_sequence(sent_mask_list)
+    input_ids_padded = torch.transpose(pad_sequence(all_input_ids_list), [0, 1])
+    input_mask_padded = torch.transpose(pad_sequence(all_input_mask_list), [0, 1])
+    segment_ids_padded = torch.transpose(pad_sequence(all_segment_ids_list), [0, 1])
+    label_ids_padded = torch.transpose(pad_sequence(all_label_ids_list), [0, 1])
+    sent_mask_padded = torch.transpose(pad_sequence(sent_mask_list), [0, 1])
 
     print('input_ids_padded: {}'.format(input_ids_padded.size()))
     print('sent_mask_padded: {}'.format(sent_mask_padded.size()))
