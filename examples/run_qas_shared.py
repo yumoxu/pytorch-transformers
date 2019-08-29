@@ -507,10 +507,11 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
 
         sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.bool)
 
-        if output_mode == "classification":
-            all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
-        elif output_mode == "regression":
-            all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.float)
+
+        all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
+        # if output_mode == "classification":
+        #     all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
+        # elif output_mode == "regression":
 
         # logger.info('all_input_ids: {}'.format(all_input_ids.size()))
         all_input_ids_list.append(all_input_ids)
