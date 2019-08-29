@@ -141,14 +141,15 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         self.apply(self.init_weights)
         self.softmax = nn.Softmax(dim=-1)
 
-    def forward(self, input_ids, token_type_ids, attention_mask, position_ids, labels=None, sent_mask=None):
+    def forward(self, input_ids, token_type_ids, attention_mask, position_ids=None, labels=None, sent_mask=None):
         num_choices = input_ids.shape[1]
         # print('num_choices: {}'.format(num_choices))
 
         flat_input_ids = input_ids.view(-1, input_ids.size(-1))
-        flat_position_ids = position_ids.view(-1, position_ids.size(-1))
         flat_token_type_ids = token_type_ids.view(-1, token_type_ids.size(-1))
         flat_attention_mask = attention_mask.view(-1, attention_mask.size(-1))
+        flat_position_ids = position_ids.view(-1, position_ids.size(-1)) if position_ids else None
+
         outputs = self.bert(flat_input_ids,
                             position_ids=flat_position_ids,
                             token_type_ids=flat_token_type_ids,
