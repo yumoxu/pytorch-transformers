@@ -499,8 +499,8 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     all_input_ids_list, all_input_mask_list, all_segment_ids_list, all_label_ids_list = [], [], [], []
     sent_mask_list = []
 
-    for passage_features in features:
-
+    logger.info('loading passage-level features')
+    for passage_features in tqdm(features):
         all_input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
@@ -512,18 +512,18 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         elif output_mode == "regression":
             all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.float)
 
-        logger.info('all_input_ids: {}'.format(all_input_ids.size()))
+        # logger.info('all_input_ids: {}'.format(all_input_ids.size()))
         all_input_ids_list.append(all_input_ids)
         all_input_mask_list.append(all_input_mask)
         all_segment_ids_list.append(all_segment_ids)
         all_label_ids_list.append(all_label_ids)
         sent_mask_list.append(sent_mask)
 
-    input_ids_padded = torch.transpose(pad_sequence(all_input_ids_list), [0, 1])
-    input_mask_padded = torch.transpose(pad_sequence(all_input_mask_list), [0, 1])
-    segment_ids_padded = torch.transpose(pad_sequence(all_segment_ids_list), [0, 1])
-    label_ids_padded = torch.transpose(pad_sequence(all_label_ids_list), [0, 1])
-    sent_mask_padded = torch.transpose(pad_sequence(sent_mask_list), [0, 1])
+    input_ids_padded = torch.transpose(pad_sequence(all_input_ids_list), 0, 1)
+    input_mask_padded = torch.transpose(pad_sequence(all_input_mask_list), 0, 1)
+    segment_ids_padded = torch.transpose(pad_sequence(all_segment_ids_list), 0, 1)
+    label_ids_padded = torch.transpose(pad_sequence(all_label_ids_list), 0, 1)
+    sent_mask_padded = torch.transpose(pad_sequence(sent_mask_list), 0, 1)
 
     print('input_ids_padded: {}'.format(input_ids_padded.size()))
     print('sent_mask_padded: {}'.format(sent_mask_padded.size()))
