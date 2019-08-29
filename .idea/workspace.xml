@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/run_qas_shared.py" afterPath="$PROJECT_DIR$/examples/run_qas_shared.py" />
     </list>
     <ignored path="pytorch-transformers.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,20 +28,20 @@
       <file leaf-file-name="run_qas_shared.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8470255">
-              <caret line="165" column="65" selection-start-line="165" selection-start-column="65" selection-end-line="165" selection-end-column="65" />
+            <state vertical-scroll-proportion="0.82152975">
+              <caret line="165" column="72" selection-start-line="165" selection-start-column="72" selection-end-line="165" selection-end-column="72" />
               <folding>
                 <element signature="e#2538#7008#1" expanded="false" />
                 <element signature="e#7049#7306#0" expanded="false" />
-                <element signature="e#9259#9413#0" expanded="false" />
-                <element signature="e#9438#9498#0" expanded="false" />
-                <element signature="e#9536#9684#0" expanded="false" />
-                <element signature="e#9762#10380#0" expanded="false" />
-                <element signature="e#9762#9896#1" expanded="false" />
-                <element signature="e#10448#11000#0" expanded="false" />
-                <element signature="e#11057#18443#0" expanded="false" />
-                <element signature="e#18499#21302#0" expanded="false" />
-                <element signature="e#25875#37441#0" expanded="false" />
+                <element signature="e#9262#9416#0" expanded="false" />
+                <element signature="e#9441#9501#0" expanded="false" />
+                <element signature="e#9539#9687#0" expanded="false" />
+                <element signature="e#9765#10383#0" expanded="false" />
+                <element signature="e#9765#9899#1" expanded="false" />
+                <element signature="e#10451#11003#0" expanded="false" />
+                <element signature="e#11060#18446#0" expanded="false" />
+                <element signature="e#18502#21305#0" expanded="false" />
+                <element signature="e#25878#37444#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -396,7 +397,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1280" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14802982" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -407,7 +408,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32935324" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973376" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26965174" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26965174" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -973,20 +974,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8470255">
-          <caret line="165" column="65" selection-start-line="165" selection-start-column="65" selection-end-line="165" selection-end-column="65" />
+        <state vertical-scroll-proportion="0.82152975">
+          <caret line="165" column="72" selection-start-line="165" selection-start-column="72" selection-end-line="165" selection-end-column="72" />
           <folding>
             <element signature="e#2538#7008#1" expanded="false" />
             <element signature="e#7049#7306#0" expanded="false" />
-            <element signature="e#9259#9413#0" expanded="false" />
-            <element signature="e#9438#9498#0" expanded="false" />
-            <element signature="e#9536#9684#0" expanded="false" />
-            <element signature="e#9762#10380#0" expanded="false" />
-            <element signature="e#9762#9896#1" expanded="false" />
-            <element signature="e#10448#11000#0" expanded="false" />
-            <element signature="e#11057#18443#0" expanded="false" />
-            <element signature="e#18499#21302#0" expanded="false" />
-            <element signature="e#25875#37441#0" expanded="false" />
+            <element signature="e#9262#9416#0" expanded="false" />
+            <element signature="e#9441#9501#0" expanded="false" />
+            <element signature="e#9539#9687#0" expanded="false" />
+            <element signature="e#9765#10383#0" expanded="false" />
+            <element signature="e#9765#9899#1" expanded="false" />
+            <element signature="e#10451#11003#0" expanded="false" />
+            <element signature="e#11060#18446#0" expanded="false" />
+            <element signature="e#18502#21305#0" expanded="false" />
+            <element signature="e#25878#37444#0" expanded="false" />
           </folding>
         </state>
       </provider>

@@ -143,8 +143,7 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
     def forward(self, input_ids, token_type_ids=None, attention_mask=None,
                 labels=None,
                 position_ids=None,
-                sent_mask=None,
-                head_mask=None):
+                sent_mask=None):
         num_choices = input_ids.shape[1]
         print('num_choices: {}'.format(num_choices))
 
@@ -155,15 +154,14 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         outputs = self.bert(flat_input_ids,
                             position_ids=flat_position_ids,
                             token_type_ids=flat_token_type_ids,
-                            attention_mask=flat_attention_mask,
-                            head_mask=head_mask)
+                            attention_mask=flat_attention_mask)
         pooled_output = outputs[1]
 
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
         reshaped_logits = logits.view(-1, num_choices)
 
-        reshaped_logits = reshaped_logits.masked_fill(sent_mask.eq(False), -1e9)
+        reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
 
         outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
 
@@ -311,7 +309,8 @@ def train(args, train_dataset, model, tokenizer):
             inputs = {'input_ids':      batch[0],
                       'attention_mask': batch[1],
                       'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM don't use segment_ids
-                      'labels':         batch[3]}
+                      'labels':         batch[3],
+                      'sent_mask':      batch[4],}
             outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
 
@@ -424,7 +423,8 @@ def evaluate(args, model, tokenizer, prefix=""):
                 inputs = {'input_ids':      batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
-                          'labels':         batch[3]}
+                          'labels':         batch[3],
+                          'sent_mask':      batch[4],}
                 outputs = model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
 
