@@ -511,7 +511,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
 
     for passage_features in tqdm(features):
         labels = [f.label_id for f in passage_features]
-        logger.info('labels: {}'.format(labels))
+        # logger.info('labels: {}'.format(labels))
         if sum(labels) == 0.0:
             logger.info('Discard unanswerable sample')
             continue
@@ -519,7 +519,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
             raise ValueError('Only one answer is allowed. Found: {}'.format(sum(labels)))
 
         label_id = labels.index(1.0)
-        logger.info('label_id: {}'.format(label_id))
+        # logger.info('label_id: {}'.format(label_id))
         label_id = torch.tensor(label_id, dtype=torch.float)
 
         input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
