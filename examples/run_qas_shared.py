@@ -63,6 +63,7 @@ logger = logging.getLogger(__name__)
 # ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig, RobertaConfig)), ())
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig)), ())
 
+
 class BertForSharedAnswerSelection(BertPreTrainedModel):
     r"""
     Inputs:
@@ -161,16 +162,14 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         reshaped_logits = logits.view(-1, num_choices)
         reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
 
+        # logger.info('labels size: {}'.format(labels.size()))
+        outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
+
         if labels is not None:
             loss_fct = MSELoss()
             normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
             loss = loss_fct(normed_scores.view(-1), labels.view(-1))
             outputs = (loss,) + outputs
-
-        # reshaped_logits = logits.view(-1, num_choices)
-        # reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
-        # outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
-
         # if labels is not None:
             # loss_fct = CrossEntropyLoss()
             # loss = loss_fct(reshaped_logits, labels)

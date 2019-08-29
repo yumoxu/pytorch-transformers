@@ -28,17 +28,17 @@
       <file leaf-file-name="run_qas_shared.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.36260623">
-              <caret line="490" column="51" selection-start-line="490" selection-start-column="51" selection-end-line="490" selection-end-column="51" />
+            <state vertical-scroll-proportion="0.5311615">
+              <caret line="165" column="8" selection-start-line="165" selection-start-column="8" selection-end-line="165" selection-end-column="8" />
               <folding>
-                <element signature="e#2538#7008#1" expanded="false" />
-                <element signature="e#9474#9628#0" expanded="false" />
-                <element signature="e#9653#9713#0" expanded="false" />
-                <element signature="e#9751#9899#0" expanded="false" />
-                <element signature="e#9977#10595#0" expanded="false" />
-                <element signature="e#9977#10111#1" expanded="false" />
-                <element signature="e#10663#11215#0" expanded="false" />
-                <element signature="e#26197#37763#0" expanded="false" />
+                <element signature="e#7050#7349#0" expanded="false" />
+                <element signature="e#9398#9552#0" expanded="false" />
+                <element signature="e#9577#9637#0" expanded="false" />
+                <element signature="e#9675#9823#0" expanded="false" />
+                <element signature="e#9901#10519#0" expanded="false" />
+                <element signature="e#9901#10035#1" expanded="false" />
+                <element signature="e#10587#11139#0" expanded="false" />
+                <element signature="e#26121#37687#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -780,8 +780,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/my_utils_glue.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.2804532">
-          <caret line="472" column="57" selection-start-line="472" selection-start-column="57" selection-end-line="472" selection-end-column="57" />
+        <state vertical-scroll-proportion="0.43823528">
+          <caret line="616" column="30" selection-start-line="616" selection-start-column="30" selection-end-line="616" selection-end-column="30" />
           <folding>
             <marker date="1567088497029" expanded="false" signature="785:1018" placeholder="import ..." />
             <marker date="1567088497029" expanded="true" signature="1086:1896" placeholder="..." />
@@ -853,15 +853,15 @@
             <marker date="1567088497029" expanded="false" signature="21627:21663" placeholder="..." />
             <marker date="1567088497029" expanded="false" signature="21696:21879" placeholder="..." />
             <marker date="1567088497029" expanded="false" signature="21922:22156" placeholder="..." />
-            <marker date="1567088497029" expanded="false" signature="22205:23177" placeholder="..." />
+            <marker date="1567088497029" expanded="true" signature="22205:23177" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pytorch_transformers/modeling_bert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8328612">
-          <caret line="988" column="39" selection-start-line="988" selection-start-column="39" selection-end-line="988" selection-end-column="39" />
+        <state vertical-scroll-proportion="0.8909348">
+          <caret line="1096" column="80" selection-start-line="1096" selection-start-column="80" selection-end-line="1096" selection-end-column="80" />
           <folding>
             <marker date="1567020583126" expanded="true" signature="737:1145" placeholder="import ..." />
             <marker date="1567020583126" expanded="false" signature="4862:7474" placeholder="..." />
@@ -952,7 +952,7 @@
             <marker date="1567020583126" expanded="true" signature="52248:58395" placeholder="..." />
             <marker date="1567020583126" expanded="false" signature="52253:56759" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
             <marker date="1567020583126" expanded="true" signature="56791:57058" placeholder="..." />
-            <marker date="1567020583126" expanded="false" signature="57199:58395" placeholder="..." />
+            <marker date="1567020583126" expanded="true" signature="57199:58395" placeholder="..." />
             <marker date="1567020583126" expanded="true" signature="58660:65041" placeholder="..." />
             <marker date="1567020583126" expanded="false" signature="58665:63135" placeholder="&quot;&quot;&quot;...&quot;&quot;&quot;" />
             <marker date="1567020583126" expanded="true" signature="63167:63426" placeholder="..." />
@@ -971,17 +971,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.36260623">
-          <caret line="490" column="51" selection-start-line="490" selection-start-column="51" selection-end-line="490" selection-end-column="51" />
+        <state vertical-scroll-proportion="0.5311615">
+          <caret line="165" column="8" selection-start-line="165" selection-start-column="8" selection-end-line="165" selection-end-column="8" />
           <folding>
-            <element signature="e#2538#7008#1" expanded="false" />
-            <element signature="e#9474#9628#0" expanded="false" />
-            <element signature="e#9653#9713#0" expanded="false" />
-            <element signature="e#9751#9899#0" expanded="false" />
-            <element signature="e#9977#10595#0" expanded="false" />
-            <element signature="e#9977#10111#1" expanded="false" />
-            <element signature="e#10663#11215#0" expanded="false" />
-            <element signature="e#26197#37763#0" expanded="false" />
+            <element signature="e#7050#7349#0" expanded="false" />
+            <element signature="e#9398#9552#0" expanded="false" />
+            <element signature="e#9577#9637#0" expanded="false" />
+            <element signature="e#9675#9823#0" expanded="false" />
+            <element signature="e#9901#10519#0" expanded="false" />
+            <element signature="e#9901#10035#1" expanded="false" />
+            <element signature="e#10587#11139#0" expanded="false" />
+            <element signature="e#26121#37687#0" expanded="false" />
           </folding>
         </state>
       </provider>
