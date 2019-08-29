@@ -509,18 +509,19 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     input_ids_list, input_mask_list, segment_ids_list, label_id_list = [], [], [], []
     sent_mask_list = []
 
+    n_unanswerable = 0
     for passage_features in tqdm(features):
         labels = [f.label_id for f in passage_features]
         # logger.info('labels: {}'.format(labels))
         if sum(labels) == 0.0:
-            logger.info('Discard unanswerable sample')
+            n_unanswerable += 1
             continue
         elif sum(labels) != 1.0:
             raise ValueError('Only one answer is allowed. Found: {}'.format(sum(labels)))
 
         label_id = labels.index(1.0)
         # logger.info('label_id: {}'.format(label_id))
-        label_id = torch.tensor(label_id, dtype=torch.float)
+        label_id = torch.tensor(label_id, dtype=torch.long)
 
         input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
         input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
@@ -533,6 +534,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         label_id_list.append(label_id)
         sent_mask_list.append(sent_mask)
 
+    logger.info('Discard unanswerable {} sample'.format(n_unanswerable))
     input_ids_padded = torch.transpose(pad_sequence(input_ids_list), 0, 1)
     input_mask_padded = torch.transpose(pad_sequence(input_mask_list), 0, 1)
     segment_ids_padded = torch.transpose(pad_sequence(segment_ids_list), 0, 1)
