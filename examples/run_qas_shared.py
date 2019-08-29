@@ -163,7 +163,7 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         logits = self.classifier(pooled_output)
         reshaped_logits = logits.view(-1, num_choices)
 
-        reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
+        reshaped_logits = reshaped_logits.masked_fill(sent_mask.eq(False), -1e9)
 
         outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
 
