@@ -511,6 +511,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
 
     for passage_features in tqdm(features):
         labels = [f.label_id for f in passage_features]
+        logger.info('labels: {}'.format(labels))
         if sum(labels) == 0.0:
             logger.info('Discard unanswerable sample')
             continue
