@@ -144,7 +144,6 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
     def forward(self, input_ids, token_type_ids, attention_mask, position_ids=None, labels=None, sent_mask=None):
         num_choices = input_ids.shape[1]
         # print('num_choices: {}'.format(num_choices))
-
         flat_input_ids = input_ids.view(-1, input_ids.size(-1))
         flat_token_type_ids = token_type_ids.view(-1, token_type_ids.size(-1))
         flat_attention_mask = attention_mask.view(-1, attention_mask.size(-1))
@@ -161,10 +160,10 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
 
         reshaped_logits = logits.view(-1, num_choices)
         reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
-        normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
 
         if labels is not None:
             loss_fct = MSELoss()
+            normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
             loss = loss_fct(normed_scores.view(-1), labels.view(-1))
             outputs = (loss,) + outputs
 
