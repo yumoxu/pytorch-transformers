@@ -159,9 +159,13 @@ class QasSharedProcessor(DataProcessor):
             if not _qid or qid == _qid:
                 _examples.append(example)
             else:  # next question
+                if not _examples:
+                    raise ValueError('Empty example found at: {}'.format(_qid))
+
                 print('qid {}: collect {} examples '.format(_qid, len(_examples)))
+
                 examples.append(_examples[:max_ns])
-                _examples = [example]  # clear buffer
+                _examples = [example]  # clear buffer and init with the current example
 
             _qid = qid
 
