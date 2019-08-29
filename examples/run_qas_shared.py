@@ -500,6 +500,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     sent_mask_list = []
 
     for passage_features in features:
+
         all_input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
         all_input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
@@ -511,6 +512,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         elif output_mode == "regression":
             all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.float)
 
+        logger.info('all_input_ids: {}'.format(all_input_ids.size()))
         all_input_ids_list.append(all_input_ids)
         all_input_mask_list.append(all_input_mask)
         all_segment_ids_list.append(all_segment_ids)
