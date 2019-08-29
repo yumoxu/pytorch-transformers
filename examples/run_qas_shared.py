@@ -535,7 +535,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     input_ids_padded = torch.transpose(pad_sequence(input_ids_list), 0, 1)
     input_mask_padded = torch.transpose(pad_sequence(input_mask_list), 0, 1)
     segment_ids_padded = torch.transpose(pad_sequence(segment_ids_list), 0, 1)
-    label_ids = torch.concat(0, label_id_list)
+    label_ids = torch.cat(label_id_list, dim=0)
     # label_ids_padded = torch.transpose(pad_sequence(label_id_list), 0, 1)
     sent_mask_padded = torch.transpose(pad_sequence(sent_mask_list), 0, 1)
 
