@@ -141,17 +141,14 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         self.apply(self.init_weights)
         self.softmax = nn.Softmax(dim=-1)
 
-    def forward(self, input_ids, token_type_ids=None, attention_mask=None,
-                labels=None,
-                position_ids=None,
-                sent_mask=None):
+    def forward(self, input_ids, token_type_ids, attention_mask, position_ids, labels=None, sent_mask=None):
         num_choices = input_ids.shape[1]
-        print('num_choices: {}'.format(num_choices))
+        # print('num_choices: {}'.format(num_choices))
 
         flat_input_ids = input_ids.view(-1, input_ids.size(-1))
-        flat_position_ids = position_ids.view(-1, position_ids.size(-1)) if position_ids is not None else None
-        flat_token_type_ids = token_type_ids.view(-1, token_type_ids.size(-1)) if token_type_ids is not None else None
-        flat_attention_mask = attention_mask.view(-1, attention_mask.size(-1)) if attention_mask is not None else None
+        flat_position_ids = position_ids.view(-1, position_ids.size(-1))
+        flat_token_type_ids = token_type_ids.view(-1, token_type_ids.size(-1))
+        flat_attention_mask = attention_mask.view(-1, attention_mask.size(-1))
         outputs = self.bert(flat_input_ids,
                             position_ids=flat_position_ids,
                             token_type_ids=flat_token_type_ids,
@@ -514,7 +511,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         all_input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
         all_segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
 
-        all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
+        all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.float)
         sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.bool)
         # if output_mode == "classification":
         #     all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
