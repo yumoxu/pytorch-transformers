@@ -612,6 +612,8 @@ def compute_metrics(task_name, preds, labels):
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "qas":
         return acc_and_f1(preds, labels)
+    elif task_name == "qas-shared":
+        return acc_and_f1(preds, labels)
     elif task_name == "mrpc":
         return acc_and_f1(preds, labels)
     elif task_name == "sts-b":
@@ -652,7 +654,7 @@ output_modes = {
     "mnli": "classification",
     "mnli-mm": "classification",
     "qas": "classification",
-    "qas-shared": "regression",
+    "qas-shared": "classification",
     "mrpc": "classification",
     "sst-2": "classification",
     "sts-b": "regression",

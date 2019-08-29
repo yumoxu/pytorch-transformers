@@ -166,16 +166,17 @@ class BertForSharedAnswerSelection(BertPreTrainedModel):
         outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
 
         if labels is not None:
-            loss_fct = MSELoss()
+            loss_fct = CrossEntropyLoss()
             normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
-            loss = loss_fct(normed_scores.view(-1), labels.view(-1))
+            loss = loss_fct(normed_scores, labels)
             outputs = (loss,) + outputs
-        # if labels is not None:
-            # loss_fct = CrossEntropyLoss()
-            # loss = loss_fct(reshaped_logits, labels)
+            # loss_fct = MSELoss()
+            # normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
+            # loss = loss_fct(normed_scores.view(-1), labels.view(-1))
             # outputs = (loss,) + outputs
 
         return outputs  # (loss), reshaped_logits, (hidden_states), (attentions)
+
 
 MODEL_CLASSES = {
     # 'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
@@ -183,6 +184,7 @@ MODEL_CLASSES = {
     'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
 }
+
 
 def set_seed(args):
     random.seed(args.seed)
@@ -358,7 +360,9 @@ def train(args, train_dataset, model, tokenizer):
 
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
                     with io.open(output_eval_file, 'a', encoding='utf-8') as writer:
-                        writer.write("%s\t%s\t%s\n" % (str(global_step), '{:.4f}'.format(avg_loss), '{:.4f}'.format(results['f1'])))
+                        record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss,
+                                                                       results['eval_loss'], results['f1'])
+                        writer.write(record)
 
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
@@ -448,6 +452,7 @@ def evaluate(args, model, tokenizer, prefix=""):
         elif args.output_mode == "regression":
             preds = np.squeeze(preds)
         result = compute_metrics(eval_task, preds, out_label_ids)
+        result['eval_loss'] = eval_loss
         results.update(result)
 
         logger.info("***** Eval results {} *****".format(prefix))
@@ -501,38 +506,44 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
 
     # Convert to Tensors and build dataset
-    all_input_ids_list, all_input_mask_list, all_segment_ids_list, all_label_ids_list = [], [], [], []
+    input_ids_list, input_mask_list, segment_ids_list, label_id_list = [], [], [], []
     sent_mask_list = []
 
-    # logger.info('Loading passage-level features')
     for passage_features in tqdm(features):
-        all_input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
-        all_input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
-        all_segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
+        labels = [f.label_id for f in passage_features]
+        if sum(labels) == 0.0:
+            logger.info('Discard unanswerable sample')
+            continue
+        elif sum(labels) != 1.0:
+            raise ValueError('Only one answer is allowed. Found: {}'.format(sum(labels)))
 
-        all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.float)
+        label_id = labels.index(1.0)
+        logger.info('label_id: {}'.format(label_id))
+        label_id = torch.tensor(label_id, dtype=torch.float)
+
+        input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
+        input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
+        segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
         sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.bool)
-        # if output_mode == "classification":
-        #     all_label_ids = torch.tensor([f.label_id for f in passage_features], dtype=torch.long)
-        # elif output_mode == "regression":
 
-        # logger.info('all_input_ids: {}'.format(all_input_ids.size()))
-        all_input_ids_list.append(all_input_ids)
-        all_input_mask_list.append(all_input_mask)
-        all_segment_ids_list.append(all_segment_ids)
-        all_label_ids_list.append(all_label_ids)
+        input_ids_list.append(input_ids)
+        input_mask_list.append(input_mask)
+        segment_ids_list.append(segment_ids)
+        label_id_list.append(label_id)
         sent_mask_list.append(sent_mask)
 
-    input_ids_padded = torch.transpose(pad_sequence(all_input_ids_list), 0, 1)
-    input_mask_padded = torch.transpose(pad_sequence(all_input_mask_list), 0, 1)
-    segment_ids_padded = torch.transpose(pad_sequence(all_segment_ids_list), 0, 1)
-    label_ids_padded = torch.transpose(pad_sequence(all_label_ids_list), 0, 1)
+    input_ids_padded = torch.transpose(pad_sequence(input_ids_list), 0, 1)
+    input_mask_padded = torch.transpose(pad_sequence(input_mask_list), 0, 1)
+    segment_ids_padded = torch.transpose(pad_sequence(segment_ids_list), 0, 1)
+    label_ids = torch.concat(0, label_id_list)
+    # label_ids_padded = torch.transpose(pad_sequence(label_id_list), 0, 1)
     sent_mask_padded = torch.transpose(pad_sequence(sent_mask_list), 0, 1)
 
-    print('input_ids_padded: {}'.format(input_ids_padded.size()))
-    print('sent_mask_padded: {}'.format(sent_mask_padded.size()))
+    logger.info('input_ids_padded: {}'.format(input_ids_padded.size()))
+    logger.info('sent_mask_padded: {}'.format(sent_mask_padded.size()))
+    logger.info('label_ids: {}'.format(label_ids.size()))
 
-    dataset = TensorDataset(input_ids_padded, input_mask_padded, segment_ids_padded, label_ids_padded, sent_mask_padded)
+    dataset = TensorDataset(input_ids_padded, input_mask_padded, segment_ids_padded, label_ids, sent_mask_padded)
 
     return dataset
 
