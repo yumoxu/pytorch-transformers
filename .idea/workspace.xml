@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/examples/run_qas_shared.py" afterPath="$PROJECT_DIR$/examples/run_qas_shared.py" />
     </list>
     <ignored path="pytorch-transformers.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,8 +27,8 @@
       <file leaf-file-name="run_qas_shared.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8088235">
-              <caret line="536" column="70" selection-start-line="536" selection-start-column="70" selection-end-line="536" selection-end-column="70" />
+            <state vertical-scroll-proportion="0.7558824">
+              <caret line="526" column="79" selection-start-line="526" selection-start-column="79" selection-end-line="526" selection-end-column="79" />
               <folding>
                 <element signature="e#9448#9602#0" expanded="false" />
                 <element signature="e#9627#9687#0" expanded="false" />
@@ -971,8 +970,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/examples/run_qas_shared.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8088235">
-          <caret line="536" column="70" selection-start-line="536" selection-start-column="70" selection-end-line="536" selection-end-column="70" />
+        <state vertical-scroll-proportion="0.7558824">
+          <caret line="526" column="79" selection-start-line="526" selection-start-column="79" selection-end-line="526" selection-end-column="79" />
           <folding>
             <element signature="e#9448#9602#0" expanded="false" />
             <element signature="e#9627#9687#0" expanded="false" />
