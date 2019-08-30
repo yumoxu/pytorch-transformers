@@ -364,7 +364,7 @@ def train(args, train_dataset, model, tokenizer):
                         io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
                     record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, results['eval_loss'],
-                                                                           results['acc'], results['f1'])
+                                                                           100*results['acc'], 100*results['f1'])
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                     update_params = {
