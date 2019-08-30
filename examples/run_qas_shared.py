@@ -290,7 +290,6 @@ def train(args, train_dataset, model, tokenizer):
         model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
                                                           output_device=args.local_rank,
                                                           find_unused_parameters=True)
-
     # Train!
     logger.info("***** Running training *****")
     logger.info("  Num examples = %d", len(train_dataset))
@@ -359,10 +358,14 @@ def train(args, train_dataset, model, tokenizer):
                     results = evaluate(args, model, tokenizer)
 
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
-                    with io.open(output_eval_file, 'a', encoding='utf-8') as writer:
-                        record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss,
-                                                                       results['eval_loss'], results['f1'])
-                        writer.write(record)
+
+                    if not os.path.exists(output_eval_file):
+                        headline = 'Step\tTrainLoss\tEvalLoss\tACC\tMicroF1\n'
+                        io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
+
+                    record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, results['eval_loss'],
+                                                                           results['acc'], results['f1'])
+                    io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
