@@ -35,9 +35,7 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 from torch.utils.data.distributed import DistributedSampler
 from tensorboardX import SummaryWriter
 
-from torch import nn
 from torch.nn.utils.rnn import pad_sequence
-from torch.nn import CrossEntropyLoss, MSELoss
 
 from tqdm import tqdm, trange
 # import sys
@@ -54,128 +52,14 @@ from pytorch_transformers import (WEIGHTS_NAME,
                                   XLNetTokenizer)
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
-from pytorch_transformers.modeling_bert import (BertConfig, BertPreTrainedModel, BertModel)
+from pytorch_transformers.modeling_bert import BertConfig
 
 from my_utils_glue import (compute_metrics, convert_examples_to_features, output_modes, processors)
-
+from qas_models import (BertForSharedAnswerSelection, BertConcatForSharedAnswerSelection)
 logger = logging.getLogger(__name__)
 
 # ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig, RobertaConfig)), ())
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig)), ())
-
-
-class BertForSharedAnswerSelection(BertPreTrainedModel):
-    r"""
-    Inputs:
-        **input_ids**: ``torch.LongTensor`` of shape ``(batch_size, num_choices, sequence_length)``:
-            Indices of input sequence tokens in the vocabulary.
-            The second dimension of the input (`num_choices`) indicates the number of choices to score.
-            To match pre-training, BERT input sequence should be formatted with [CLS] and [SEP] tokens as follows:
-
-            (a) For sequence pairs:
-
-                ``tokens:         [CLS] is this jack ##son ##ville ? [SEP] no it is not . [SEP]``
-
-                ``token_type_ids:   0   0  0    0    0     0       0   0   1  1  1  1   1   1``
-
-            (b) For single sequences:
-
-                ``tokens:         [CLS] the dog is hairy . [SEP]``
-
-                ``token_type_ids:   0   0   0   0  0     0   0``
-
-            Indices can be obtained using :class:`pytorch_transformers.BertTokenizer`.
-            See :func:`pytorch_transformers.PreTrainedTokenizer.encode` and
-            :func:`pytorch_transformers.PreTrainedTokenizer.convert_tokens_to_ids` for details.
-        **token_type_ids**: (`optional`) ``torch.LongTensor`` of shape ``(batch_size, num_choices, sequence_length)``:
-            Segment token indices to indicate first and second portions of the inputs.
-            The second dimension of the input (`num_choices`) indicates the number of choices to score.
-            Indices are selected in ``[0, 1]``: ``0`` corresponds to a `sentence A` token, ``1``
-            corresponds to a `sentence B` token
-            (see `BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding`_ for more details).
-        **attention_mask**: (`optional`) ``torch.FloatTensor`` of shape ``(batch_size, num_choices, sequence_length)``:
-            Mask to avoid performing attention on padding token indices.
-            The second dimension of the input (`num_choices`) indicates the number of choices to score.
-            Mask values selected in ``[0, 1]``:
-            ``1`` for tokens that are NOT MASKED, ``0`` for MASKED tokens.
-        **head_mask**: (`optional`) ``torch.FloatTensor`` of shape ``(num_heads,)`` or ``(num_layers, num_heads)``:
-            Mask to nullify selected heads of the self-attention modules.
-            Mask values selected in ``[0, 1]``:
-            ``1`` indicates the head is **not masked**, ``0`` indicates the head is **masked**.
-        **labels**: (`optional`) ``torch.LongTensor`` of shape ``(batch_size,)``:
-            Labels for computing the multiple choice classification loss.
-            Indices should be in ``[0, ..., num_choices]`` where `num_choices` is the size of the second dimension
-            of the input tensors. (see `input_ids` above)
-
-    Outputs: `Tuple` comprising various elements depending on the configuration (config) and inputs:
-        **loss**: (`optional`, returned when ``labels`` is provided) ``torch.FloatTensor`` of shape ``(1,)``:
-            Classification loss.
-        **classification_scores**: ``torch.FloatTensor`` of shape ``(batch_size, num_choices)`` where `num_choices` is the size of the second dimension
-            of the input tensors. (see `input_ids` above).
-            Classification scores (before SoftMax).
-        **hidden_states**: (`optional`, returned when ``config.output_hidden_states=True``)
-            list of ``torch.FloatTensor`` (one for the output of each layer + the output of the embeddings)
-            of shape ``(batch_size, sequence_length, hidden_size)``:
-            Hidden-states of the model at the output of each layer plus the initial embedding outputs.
-        **attentions**: (`optional`, returned when ``config.output_attentions=True``)
-            list of ``torch.FloatTensor`` (one for each layer) of shape ``(batch_size, num_heads, sequence_length, sequence_length)``:
-            Attentions weights after the attention softmax, used to compute the weighted average in the self-attention heads.
-
-    Examples::
-
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model = BertForMultipleChoice.from_pretrained('bert-base-uncased')
-        choices = ["Hello, my dog is cute", "Hello, my cat is amazing"]
-        input_ids = torch.tensor([tokenizer.encode(s) for s in choices]).unsqueeze(0)  # Batch size 1, 2 choices
-        labels = torch.tensor(1).unsqueeze(0)  # Batch size 1
-        outputs = model(input_ids, labels=labels)
-        loss, classification_scores = outputs[:2]
-
-    """
-    def __init__(self, config):
-        super(BertForSharedAnswerSelection, self).__init__(config)
-
-        self.bert = BertModel(config)
-        self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(config.hidden_size, 1)
-
-        self.apply(self.init_weights)
-        self.softmax = nn.Softmax(dim=-1)
-
-    def forward(self, input_ids, token_type_ids, attention_mask, position_ids=None, labels=None, sent_mask=None):
-        num_choices = input_ids.shape[1]
-        # print('num_choices: {}'.format(num_choices))
-        flat_input_ids = input_ids.view(-1, input_ids.size(-1))
-        flat_token_type_ids = token_type_ids.view(-1, token_type_ids.size(-1))
-        flat_attention_mask = attention_mask.view(-1, attention_mask.size(-1))
-        flat_position_ids = position_ids.view(-1, position_ids.size(-1)) if position_ids else None
-
-        outputs = self.bert(flat_input_ids,
-                            position_ids=flat_position_ids,
-                            token_type_ids=flat_token_type_ids,
-                            attention_mask=flat_attention_mask)
-        pooled_output = outputs[1]
-
-        pooled_output = self.dropout(pooled_output)
-        logits = self.classifier(pooled_output)
-
-        reshaped_logits = logits.view(-1, num_choices)
-        reshaped_logits = reshaped_logits.masked_fill(sent_mask==False, -1e9)
-
-        # logger.info('labels size: {}'.format(labels.size()))
-        outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
-
-        if labels is not None:
-            loss_fct = CrossEntropyLoss()
-            normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
-            loss = loss_fct(normed_scores, labels)
-            outputs = (loss,) + outputs
-            # loss_fct = MSELoss()
-            # normed_scores = self.softmax(reshaped_logits)  # d_batch * n_choices
-            # loss = loss_fct(normed_scores.view(-1), labels.view(-1))
-            # outputs = (loss,) + outputs
-
-        return outputs  # (loss), reshaped_logits, (hidden_states), (attentions)
 
 
 MODEL_CLASSES = {
@@ -360,11 +244,12 @@ def train(args, train_dataset, model, tokenizer):
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
 
                     if not os.path.exists(output_eval_file):
-                        headline = 'Step\tTrainLoss\tEvalLoss\tACC\tMicroF1\n'
+                        headline = 'Step\tTrain\tEval\tMicroF1\n'
                         io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
-                    record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, results['eval_loss'],
-                                                                           100*results['acc'], 100*results['f1'])
+                    record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss,
+                                                                   results['eval_loss'],
+                                                                   100*results['f1'])
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                     update_params = {
@@ -542,7 +427,6 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     input_mask_padded = torch.transpose(pad_sequence(input_mask_list), 0, 1)
     segment_ids_padded = torch.transpose(pad_sequence(segment_ids_list), 0, 1)
     label_ids = torch.stack(label_id_list, dim=0)
-    # label_ids_padded = torch.transpose(pad_sequence(label_id_list), 0, 1)
     sent_mask_padded = torch.transpose(pad_sequence(sent_mask_list), 0, 1)
 
     logger.info('input_ids_padded: {}'.format(input_ids_padded.size()))
