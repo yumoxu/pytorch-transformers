@@ -482,6 +482,8 @@ def evaluate(args, model, tokenizer, prefix=""):
         elif args.output_mode == "regression":
             preds = np.squeeze(preds)
         result = compute_metrics(eval_task, preds, out_label_ids)
+        result['eval_loss'] = eval_loss
+
         results.update(result)
 
         logger.info("***** Eval results {} *****".format(prefix))
