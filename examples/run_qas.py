@@ -34,7 +34,6 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
                               TensorDataset)
 from torch.utils.data.distributed import DistributedSampler
 from tensorboardX import SummaryWriter
-from torch.nn.utils.rnn import pad_sequence
 
 from tqdm import tqdm, trange
 
@@ -135,7 +134,7 @@ def clean_outdated_checkpoints(checkpoint, checkpoint_dict):
     logger.info('Available #checkpoints: {}'.format(len(ckpt_dirs)))
 
 
-def train(args, train_dataset, model, tokenizer):
+def train_archived(args, train_dataset, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter()
@@ -244,6 +243,157 @@ def train(args, train_dataset, model, tokenizer):
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
                     with io.open(output_eval_file, 'a', encoding='utf-8') as writer:
                         writer.write("%s\t%s\t%s\n" % (str(global_step), '{:.4f}'.format(avg_loss), '{:.4f}'.format(results['f1'])))
+
+                    update_params = {
+                        'checkpoint_dict': checkpoint_dict,
+                        'k': global_step,
+                        'v': results['f1'],
+                    }
+                    checkpoint_dict, update, _ = update_checkpoint_dict(**update_params)
+
+                    if update:
+                        # init dir
+                        output_dir = os.path.join(args.output_dir, 'checkpoint-{}'.format(global_step))
+                        if not os.path.exists(output_dir):
+                            os.makedirs(output_dir)
+
+                        # save
+                        model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
+                        model_to_save.save_pretrained(output_dir)
+                        torch.save(args, os.path.join(output_dir, 'training_args.bin'))
+                        logger.info("Saving model checkpoint to %s", output_dir)
+
+                        # clean
+                        clean_outdated_checkpoints(args.output_dir, checkpoint_dict)
+
+            if args.max_steps > 0 and global_step > args.max_steps:
+                epoch_iterator.close()
+                break
+        if args.max_steps > 0 and global_step > args.max_steps:
+            train_iterator.close()
+            break
+
+    if args.local_rank in [-1, 0]:
+        tb_writer.close()
+
+    return global_step, tr_loss / global_step
+
+
+def train(args, train_dataset, model, tokenizer):
+    """ Train the model """
+    if args.local_rank in [-1, 0]:
+        tb_writer = SummaryWriter()
+
+    args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
+    train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
+    train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
+
+    if args.max_steps > 0:
+        t_total = args.max_steps
+        args.num_train_epochs = args.max_steps // (len(train_dataloader) // args.gradient_accumulation_steps) + 1
+    else:
+        t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
+
+    # Prepare optimizer and schedule (linear warmup and decay)
+    no_decay = ['bias', 'LayerNorm.weight']
+    optimizer_grouped_parameters = [
+        {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': args.weight_decay},
+        {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+        ]
+    optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
+    scheduler = WarmupLinearSchedule(optimizer, warmup_steps=args.warmup_steps, t_total=t_total)
+    if args.fp16:
+        try:
+            from apex import amp
+        except ImportError:
+            raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
+        model, optimizer = amp.initialize(model, optimizer, opt_level=args.fp16_opt_level)
+
+    # multi-gpu training (should be after apex fp16 initialization)
+    if args.n_gpu > 1:
+        model = torch.nn.DataParallel(model)
+
+    # Distributed training (should be after apex fp16 initialization)
+    if args.local_rank != -1:
+        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
+                                                          output_device=args.local_rank,
+                                                          find_unused_parameters=True)
+    # Train!
+    logger.info("***** Running training *****")
+    logger.info("  Num examples = %d", len(train_dataset))
+    logger.info("  Num Epochs = %d", args.num_train_epochs)
+    logger.info("  Instantaneous batch size per GPU = %d", args.per_gpu_train_batch_size)
+    logger.info("  Total train batch size (w. parallel, distributed & accumulation) = %d",
+                   args.train_batch_size * args.gradient_accumulation_steps * (torch.distributed.get_world_size() if args.local_rank != -1 else 1))
+    logger.info("  Gradient Accumulation steps = %d", args.gradient_accumulation_steps)
+    logger.info("  Total optimization steps = %d", t_total)
+
+    global_step = 0
+    tr_loss, logging_loss = 0.0, 0.0
+    checkpoint_dict = dict()  # {n_batches: f1}
+
+    model.zero_grad()
+    train_iterator = trange(int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
+    set_seed(args)  # Added here for reproductibility (even between python 2 and 3)
+    for _ in train_iterator:
+        epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
+        for step, batch in enumerate(epoch_iterator):
+            model.train()
+            batch = tuple(t.to(args.device) for t in batch)
+            inputs = {'input_ids':      batch[0],
+                      'attention_mask': batch[1],
+                      'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM don't use segment_ids
+                      'labels':         batch[3]}
+            outputs = model(**inputs)
+            loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
+
+            if args.n_gpu > 1:
+                loss = loss.mean() # mean() to average on multi-gpu parallel training
+            if args.gradient_accumulation_steps > 1:
+                loss = loss / args.gradient_accumulation_steps
+
+            if args.fp16:
+                with amp.scale_loss(loss, optimizer) as scaled_loss:
+                    scaled_loss.backward()
+                torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), args.max_grad_norm)
+            else:
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+
+            tr_loss += loss.item()
+            if (step + 1) % args.gradient_accumulation_steps == 0:
+                scheduler.step()  # Update learning rate schedule
+                optimizer.step()
+                model.zero_grad()
+                global_step += 1
+
+                # this part is changed
+                avg_loss = None
+                if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
+                    tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
+                    avg_loss = (tr_loss - logging_loss) / args.logging_steps
+                    tb_writer.add_scalar('loss', avg_loss, global_step)
+                    logging_loss = tr_loss
+
+                if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
+                    # Save model checkpoint
+                    # Evaluate before saving
+                    if not (args.local_rank == -1 and args.evaluate_during_training):
+                        # Only evaluate when single GPU otherwise metrics may not average well
+                        raise ValueError('Have to eval before saving model!')
+
+                    results = evaluate(args, model, tokenizer)
+
+                    output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
+
+                    if not os.path.exists(output_eval_file):
+                        headline = 'Step\tTrain\tEval\tMicroF1\n'
+                        io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
+
+                    record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss,
+                                                                   results['eval_loss'],
+                                                                   100*results['f1'])
+                    io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
@@ -438,8 +588,6 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
 
     # Convert to Tensors and build dataset
     input_ids_list, input_mask_list, segment_ids_list, label_id_list = [], [], [], []
-    sent_mask_list = []
-
     n_unanswerable = 0
     for passage_features in tqdm(features):
         labels = [f.label_id for f in passage_features]
@@ -457,26 +605,22 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
         input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
         segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
-        sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.bool)
 
         input_ids_list.append(input_ids)
         input_mask_list.append(input_mask)
         segment_ids_list.append(segment_ids)
         label_id_list.append(label_id)
-        sent_mask_list.append(sent_mask)
 
     logger.info('Discard unanswerable {} sample'.format(n_unanswerable))
     input_ids = torch.stack(input_ids_list, dim=0)
     input_mask = torch.stack(input_mask_list, dim=0)
     segment_ids = torch.stack(segment_ids_list, dim=0)
     label_ids = torch.stack(label_id_list, dim=0)
-    sent_mask = torch.stack(sent_mask_list, dim=0)
 
-    logger.info('input_ids_padded: {}'.format(input_ids.size()))
-    logger.info('sent_mask_padded: {}'.format(sent_mask.size()))
+    logger.info('input_ids: {}'.format(input_ids.size()))
     logger.info('label_ids: {}'.format(label_ids.size()))
 
-    dataset = TensorDataset(input_ids, input_mask, segment_ids, label_ids, sent_mask)
+    dataset = TensorDataset(input_ids, input_mask, segment_ids, label_ids)
 
     return dataset
 
