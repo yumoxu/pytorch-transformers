@@ -341,7 +341,7 @@ def evaluate(args, model, tokenizer, prefix=""):
     return results
 
 
-def load_and_cache_examples(args, task, tokenizer, evaluate=False):
+def load_and_cache_examples_w_unanswerable_samples(args, task, tokenizer, evaluate=False):
     if args.local_rank not in [-1, 0]:
         torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
 
@@ -390,6 +390,94 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.float)
 
     dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+    return dataset
+
+
+def load_and_cache_examples(args, task, tokenizer, evaluate=False):
+    if args.local_rank not in [-1, 0]:
+        torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
+
+    processor = processors[task]()
+    output_mode = output_modes[task]
+    # Load data features from cache or dataset file
+    cached_features_file = os.path.join(args.data_dir, 'cached_shared_{}_{}_{}_{}'.format(
+        'dev' if evaluate else 'train',
+        list(filter(None, args.model_name_or_path.split('/'))).pop(),
+        str(args.max_seq_length),
+        str(task)))
+    if os.path.exists(cached_features_file):
+        logger.info("Loading features from cached file %s", cached_features_file)
+        features = torch.load(cached_features_file)
+    else:
+        logger.info("Creating features from dataset file at %s", args.data_dir)
+        label_list = processor.get_labels()
+        if task in ['mnli', 'mnli-mm'] and args.model_type in ['roberta']:
+            label_list[1], label_list[2] = label_list[2], label_list[1]
+        examples = processor.get_dev_examples(args.data_dir) if evaluate else processor.get_train_examples(args.data_dir)
+        features = []
+        for passage_examples in examples:
+            passage_features = convert_examples_to_features(
+                passage_examples, label_list, args.max_seq_length, tokenizer, output_mode,
+                cls_token_at_end=bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
+                cls_token=tokenizer.cls_token,
+                cls_token_segment_id=2 if args.model_type in ['xlnet'] else 0,
+                sep_token=tokenizer.sep_token,
+                sep_token_extra=bool(args.model_type in ['roberta']),           # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+                pad_on_left=bool(args.model_type in ['xlnet']),                 # pad on the left for xlnet
+                pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
+                pad_token_segment_id=4 if args.model_type in ['xlnet'] else 0,
+            )
+            features.append(passage_features)
+
+        if args.local_rank in [-1, 0]:
+            logger.info("Saving features into cached file %s", cached_features_file)
+            torch.save(features, cached_features_file)
+
+    if args.local_rank == 0:
+        torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
+
+    # Convert to Tensors and build dataset
+    input_ids_list, input_mask_list, segment_ids_list, label_id_list = [], [], [], []
+    sent_mask_list = []
+
+    n_unanswerable = 0
+    for passage_features in tqdm(features):
+        labels = [f.label_id for f in passage_features]
+        # logger.info('labels: {}'.format(labels))
+        if sum(labels) == 0.0:
+            n_unanswerable += 1
+            continue
+        elif sum(labels) != 1.0:
+            raise ValueError('Only one answer is allowed. Found: {}'.format(sum(labels)))
+
+        label_id = labels.index(1.0)
+        # logger.info('label_id: {}'.format(label_id))
+        label_id = torch.tensor(label_id, dtype=torch.long)
+
+        input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
+        input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
+        segment_ids = torch.tensor([f.segment_ids for f in passage_features], dtype=torch.long)
+        sent_mask = torch.tensor([1] * len(passage_features), dtype=torch.bool)
+
+        input_ids_list.append(input_ids)
+        input_mask_list.append(input_mask)
+        segment_ids_list.append(segment_ids)
+        label_id_list.append(label_id)
+        sent_mask_list.append(sent_mask)
+
+    logger.info('Discard unanswerable {} sample'.format(n_unanswerable))
+    input_ids = torch.stack(input_ids_list, dim=0)
+    input_mask = torch.stack(input_mask_list, dim=0)
+    segment_ids = torch.stack(segment_ids_list, dim=0)
+    label_ids = torch.stack(label_id_list, dim=0)
+    sent_mask = torch.stack(sent_mask_list, dim=0)
+
+    logger.info('input_ids_padded: {}'.format(input_ids.size()))
+    logger.info('sent_mask_padded: {}'.format(sent_mask.size()))
+    logger.info('label_ids: {}'.format(label_ids.size()))
+
+    dataset = TensorDataset(input_ids, input_mask, segment_ids, label_ids, sent_mask)
+
     return dataset
 
 

@@ -122,7 +122,7 @@ class MrpcProcessor(DataProcessor):
         return examples
 
 
-class QasSharedProcessor(DataProcessor):
+class QasProcessor(DataProcessor):
     """Processor for the QAS Passage data set."""
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -649,8 +649,9 @@ processors = {
     "cola": ColaProcessor,
     "mnli": MnliProcessor,
     "mnli-mm": MnliMismatchedProcessor,
-    "qas": MrpcProcessor,
-    "qas-shared": QasSharedProcessor,
+    # "qas": MrpcProcessor,
+    "qas": QasProcessor,
+    "qas-shared": QasProcessor,
     "mrpc": MrpcProcessor,
     "sst-2": Sst2Processor,
     "sts-b": StsbProcessor,
