@@ -612,10 +612,10 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         labels_list.append(labels)
 
     logger.info('Discard unanswerable {} sample'.format(n_unanswerable))
-    input_ids = torch.concat(input_ids_list, dim=0)
-    input_mask = torch.concat(input_mask_list, dim=0)
-    segment_ids = torch.concat(segment_ids_list, dim=0)
-    label_ids = torch.concat(labels_list, dim=0)
+    input_ids = torch.cat(input_ids_list, dim=0)
+    input_mask = torch.cat(input_mask_list, dim=0)
+    segment_ids = torch.cat(segment_ids_list, dim=0)
+    label_ids = torch.cat(labels_list, dim=0)
 
     logger.info('input_ids: {}'.format(input_ids.size()))
     logger.info('label_ids: {}'.format(label_ids.size()))
