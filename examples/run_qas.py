@@ -588,7 +588,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
 
     # Convert to Tensors and build dataset
-    input_ids_list, input_mask_list, segment_ids_list, label_id_list = [], [], [], []
+    input_ids_list, input_mask_list, segment_ids_list, labels_list = [], [], [], []
     n_unanswerable = 0
     for passage_features in tqdm(features):
         labels = [f.label_id for f in passage_features]
@@ -599,9 +599,8 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         elif sum(labels) != 1.0:
             raise ValueError('Only one answer is allowed. Found: {}'.format(sum(labels)))
 
-        label_id = labels.index(1.0)
         # logger.info('label_id: {}'.format(label_id))
-        label_id = torch.tensor(label_id, dtype=torch.long)
+        labels = torch.tensor(labels, dtype=torch.long)
 
         input_ids = torch.tensor([f.input_ids for f in passage_features], dtype=torch.long)
         input_mask = torch.tensor([f.input_mask for f in passage_features], dtype=torch.long)
@@ -610,13 +609,13 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         input_ids_list.append(input_ids)
         input_mask_list.append(input_mask)
         segment_ids_list.append(segment_ids)
-        label_id_list.append(label_id)
+        labels_list.append(labels)
 
     logger.info('Discard unanswerable {} sample'.format(n_unanswerable))
-    input_ids = torch.stack(input_ids_list, dim=0)
-    input_mask = torch.stack(input_mask_list, dim=0)
-    segment_ids = torch.stack(segment_ids_list, dim=0)
-    label_ids = torch.stack(label_id_list, dim=0)
+    input_ids = torch.concat(input_ids_list, dim=0)
+    input_mask = torch.concat(input_mask_list, dim=0)
+    segment_ids = torch.concat(segment_ids_list, dim=0)
+    label_ids = torch.concat(labels_list, dim=0)
 
     logger.info('input_ids: {}'.format(input_ids.size()))
     logger.info('label_ids: {}'.format(label_ids.size()))
