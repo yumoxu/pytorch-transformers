@@ -13,7 +13,7 @@ def get_max_v(d):
     return 0.0
 
 
-def get_min_kv(d, init_v=1.0):
+def get_min_kv(d, init_v=100):
     min_k = None
     min_v = init_v
     for k, v in d.items():

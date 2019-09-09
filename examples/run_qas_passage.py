@@ -189,15 +189,11 @@ def train(args, train_dataset, model, tokenizer):
 
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
 
-                    if not os.path.exists(output_eval_file):  # todo: change headline
-                        headline = 'Step\tTrain\tEval\tMicroF1\n'
+                    if not os.path.exists(output_eval_file):
+                        headline = 'Step\tTrain\tExact\tF1\n'
                         io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
-                    # todo: change record
-                    record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step,
-                                                                   avg_loss,
-                                                                   100 * results['exact'],
-                                                                   100 * results['f1'])
+                    record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, results['exact'], results['f1'])
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                     update_params = {
