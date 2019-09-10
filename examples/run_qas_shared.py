@@ -202,6 +202,7 @@ def train(args, train_dataset, model, tokenizer):
                         'checkpoint_dict': checkpoint_dict,
                         'k': global_step,
                         'v': results['f1'],
+                        'max_n_checkpoint': 1,
                     }
                     checkpoint_dict, update, _ = update_checkpoint_dict(**update_params)
 
