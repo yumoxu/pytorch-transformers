@@ -172,6 +172,59 @@ class QasProcessor(DataProcessor):
         return examples
 
 
+class WikiTrecProcessor(DataProcessor):
+    """Processor for the QAS Passage data set."""
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        logger.info("LOOKING AT {}".format(os.path.join(data_dir, "train.tsv")))
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_labels(self):
+        """See base class."""
+        return ["0", "1"]
+
+    def _create_examples(self, lines, set_type, max_ns=None):
+        """
+            Creates examples for the training and dev sets.
+            Examples are nested and organized via passages.
+        """
+        examples = []
+
+        _examples = []  # buffer for the last subset of examples
+        _qid = None  # buffer for the last qid
+        for (i, line) in enumerate(lines):
+            if i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            # print('{}th line: {}'.format(i, line))
+            label, qid, _, text_a, text_b = line
+            example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
+
+            if not _qid or qid == _qid:
+                _examples.append(example)
+            else:  # next question
+                if not _examples:
+                    raise ValueError('Empty example found at: {}'.format(_qid))
+
+                print('qid {}: collect {} examples '.format(_qid, len(_examples)))
+
+                if max_ns:
+                    _examples = _examples[:max_ns]
+
+                examples.append(_examples)
+                _examples = [example]  # clear buffer and init with the current example
+
+            _qid = qid
+
+        return examples
+
+
 class MnliProcessor(DataProcessor):
     """Processor for the MultiNLI data set (GLUE version)."""
 
@@ -625,6 +678,9 @@ def compute_metrics(task_name, preds, labels):
         return acc_and_f1(preds, labels)
     elif task_name == "qas-shared":
         return acc_and_micro_f1(preds, labels)
+    elif task_name == "wiki-trec":
+        return acc_and_f1(preds, labels)
+
     elif task_name == "mrpc":
         return acc_and_f1(preds, labels)
     elif task_name == "sts-b":
@@ -652,6 +708,7 @@ processors = {
     # "qas": MrpcProcessor,
     "qas": QasProcessor,
     "qas-shared": QasProcessor,
+    "wiki-trec": WikiTrecProcessor,
     "mrpc": MrpcProcessor,
     "sst-2": Sst2Processor,
     "sts-b": StsbProcessor,
@@ -667,6 +724,7 @@ output_modes = {
     "mnli-mm": "classification",
     "qas": "classification",
     "qas-shared": "classification",
+    "wiki-trec": "classification",
     "mrpc": "classification",
     "sst-2": "classification",
     "sts-b": "regression",
@@ -681,6 +739,7 @@ GLUE_TASKS_NUM_LABELS = {
     "mnli": 3,
     "qas": 2,
     "qas-shared": 1,
+    "wiki-trec": 2,
     "mrpc": 2,
     "sst-2": 2,
     "sts-b": 1,

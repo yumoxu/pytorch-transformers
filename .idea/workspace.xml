@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/run_qas.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/run_qas.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,12 +44,12 @@
     <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/examples" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/examples/tests_samples" />
       <recent name="$PROJECT_DIR$/pytorch_transformers" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/examples" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -115,7 +116,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1566734196889</updated>
-      <workItem from="1567177119937" duration="32528000" />
+      <workItem from="1567177119937" duration="34129000" />
+      <workItem from="1568231342451" duration="412000" />
     </task>
     <servers />
   </component>
@@ -127,7 +129,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
