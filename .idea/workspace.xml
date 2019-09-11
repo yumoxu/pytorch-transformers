@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/examples/run_wiki_trec.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/my_utils_glue.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/my_utils_glue.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/examples/run_qas.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/run_qas.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -117,7 +119,7 @@
       <option name="presentableId" value="Default" />
       <updated>1566734196889</updated>
       <workItem from="1567177119937" duration="34129000" />
-      <workItem from="1568231342451" duration="412000" />
+      <workItem from="1568231342451" duration="1325000" />
     </task>
     <servers />
   </component>

@@ -172,7 +172,7 @@ class QasProcessor(DataProcessor):
         return examples
 
 
-class WikiTrecProcessor(DataProcessor):
+class WtProcessor(DataProcessor):
     """Processor for the QAS Passage data set."""
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -657,7 +657,6 @@ def acc_and_micro_f1(preds, labels):
     }
 
 
-
 def pearson_and_spearman(preds, labels):
     pearson_corr = pearsonr(preds, labels)[0]
     spearman_corr = spearmanr(preds, labels)[0]
@@ -678,7 +677,7 @@ def compute_metrics(task_name, preds, labels):
         return acc_and_f1(preds, labels)
     elif task_name == "qas-shared":
         return acc_and_micro_f1(preds, labels)
-    elif task_name == "wiki-trec":
+    elif task_name == "wt":
         return acc_and_f1(preds, labels)
 
     elif task_name == "mrpc":
@@ -708,7 +707,7 @@ processors = {
     # "qas": MrpcProcessor,
     "qas": QasProcessor,
     "qas-shared": QasProcessor,
-    "wiki-trec": WikiTrecProcessor,
+    "wt": WtProcessor,
     "mrpc": MrpcProcessor,
     "sst-2": Sst2Processor,
     "sts-b": StsbProcessor,
@@ -724,7 +723,7 @@ output_modes = {
     "mnli-mm": "classification",
     "qas": "classification",
     "qas-shared": "classification",
-    "wiki-trec": "classification",
+    "wt": "classification",
     "mrpc": "classification",
     "sst-2": "classification",
     "sts-b": "regression",
@@ -739,7 +738,7 @@ GLUE_TASKS_NUM_LABELS = {
     "mnli": 3,
     "qas": 2,
     "qas-shared": 1,
-    "wiki-trec": 2,
+    "wt": 2,
     "mrpc": 2,
     "sst-2": 2,
     "sts-b": 1,
