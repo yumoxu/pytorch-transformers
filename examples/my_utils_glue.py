@@ -203,7 +203,7 @@ class WtProcessor(DataProcessor):
                 continue
             guid = "%s-%s" % (set_type, i)
             # print('{}th line: {}'.format(i, line))
-            label, qid, _, text_a, text_b = line
+            label, qid, text_a, text_b = line
             example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
 
             if not _qid or qid == _qid:
