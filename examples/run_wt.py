@@ -380,6 +380,16 @@ def eval_birch_model(args):
 
     model = state['model']
     model.to(args.device)
+
+    if args.n_gpu > 1:
+        model = torch.nn.DataParallel(model)
+
+    # Distributed training (should be after apex fp16 initialization)
+    if args.local_rank != -1:
+        model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank],
+                                                          output_device=args.local_rank,
+                                                          find_unused_parameters=True)
+
     results = evaluate(args, model=model, tokenizer=state['tokenizer'])
 
     logger.info('Birch scores: {}'.format(state['scores']))
