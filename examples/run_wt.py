@@ -445,6 +445,7 @@ def eval_birch_model(args):
 
         eval_loss = eval_loss / nb_eval_steps
         if args.output_mode == "classification":
+            logger.info('preds size: {}')
             preds = np.argmax(preds, axis=1)
         elif args.output_mode == "regression":
             preds = np.squeeze(preds)
