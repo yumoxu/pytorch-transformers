@@ -427,7 +427,7 @@ def eval_birch_model(args):
             batch = tuple(t.to(args.device) for t in batch)
 
             with torch.no_grad():
-                logger.info('batch[0]: {}'.format(batch[0].size()))
+                logger.info('batch[0] shape: {}'.format(batch[0].size()))
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,
