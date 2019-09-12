@@ -262,9 +262,12 @@ def evaluate(args, model, tokenizer, prefix=""):
                 tmp_eval_loss, logits = outputs[:2]
 
                 eval_loss += tmp_eval_loss.mean().item()
+
             nb_eval_steps += 1
+
             if preds is None:
                 preds = logits.detach().cpu().numpy()
+                logger.info('preds: {}'.format(preds.shape))
                 out_label_ids = inputs[label_key].detach().cpu().numpy()
 
             else:
