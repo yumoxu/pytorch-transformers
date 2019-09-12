@@ -402,7 +402,6 @@ def eval_birch_model(args):
     eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
 
     results = {}
-    label_key = 'next_sentence_label'  # labels
     prefix = 'birch'
     for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
         eval_dataset = load_and_cache_examples(args, eval_task, tokenizer, evaluate=True)
@@ -428,21 +427,21 @@ def eval_birch_model(args):
             batch = tuple(t.to(args.device) for t in batch)
 
             with torch.no_grad():
+                logger.info('batch[0]: {}'.format(batch[0].size()))
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,
-                          # XLM and RoBERTa don't use segment_ids
-                          label_key: batch[3]}
+                          'next_sentence_label': batch[3]}
                 logits = model(**inputs)
                 logger.info('logits: {}'.format(logits))
             nb_eval_steps += 1
 
             if preds is None:
                 preds = logits.detach().cpu().numpy()
-                out_label_ids = inputs[label_key].detach().cpu().numpy()
+                out_label_ids = inputs['next_sentence_label'].detach().cpu().numpy()
             else:
                 preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                out_label_ids = np.append(out_label_ids, inputs[label_key].detach().cpu().numpy(), axis=0)
+                out_label_ids = np.append(out_label_ids, inputs['next_sentence_label'].detach().cpu().numpy(), axis=0)
 
         eval_loss = eval_loss / nb_eval_steps
         if args.output_mode == "classification":
