@@ -378,7 +378,9 @@ def eval_birch_model(args):
     else:
         state = torch.load(birch_model_fp)
 
-    results = evaluate(args, model=state['model'], tokenizer=state['tokenizer'])
+    model = state['model']
+    model.to(args.device)
+    results = evaluate(args, model=model, tokenizer=state['tokenizer'])
 
     logger.info('Birch scores: {}'.format(state['scores']))
     logger.info('Birch results: {:.4f}\t{:.4f}'.format(results['eval_loss'], 100 * results['f1']))
