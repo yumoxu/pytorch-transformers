@@ -334,13 +334,13 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
 
     # Convert to Tensors and build dataset
     input_ids_list, input_mask_list, segment_ids_list, labels_list = [], [], [], []
-    n_unanswerable = 0
+    # n_unanswerable = 0
     for passage_features in tqdm(features):
         labels = [f.label_id for f in passage_features]
         # logger.info('labels: {}'.format(labels))
-        if sum(labels) == 0.0:
-            n_unanswerable += 1
-            continue
+        # if sum(labels) == 0.0:
+        #     n_unanswerable += 1
+        #     continue
 
         # logger.info('label_id: {}'.format(label_id))
         labels = torch.tensor(labels, dtype=torch.long)
@@ -354,7 +354,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         segment_ids_list.append(segment_ids)
         labels_list.append(labels)
 
-    logger.info('Discard unanswerable {} sample'.format(n_unanswerable))
+    # logger.info('Discard unanswerable {} sample'.format(n_unanswerable))
     input_ids = torch.cat(input_ids_list, dim=0)
     input_mask = torch.cat(input_mask_list, dim=0)
     segment_ids = torch.cat(segment_ids_list, dim=0)
@@ -435,7 +435,7 @@ def main():
                         help="Overwrite the content of the output directory")
     parser.add_argument('--overwrite_cache', action='store_true',
                         help="Overwrite the cached training and evaluation sets")
-    parser.add_argument('--seed', type=int, default=42,
+    parser.add_argument('--seed', type=int, default=12345,
                         help="random seed for initialization")
 
     parser.add_argument('--fp16', action='store_true',
