@@ -260,6 +260,8 @@ def evaluate(args, model, tokenizer, prefix=""):
                           label_key: batch[3]}
                 outputs = model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
+                logger.info('tmp_eval_loss: {}'.format(tmp_eval_loss))
+                logger.info('logits: {}'.format(logits))
 
                 eval_loss += tmp_eval_loss.mean().item()
 
@@ -267,7 +269,7 @@ def evaluate(args, model, tokenizer, prefix=""):
 
             if preds is None:
                 preds = logits.detach().cpu().numpy()
-                logger.info('preds: {}'.format(preds.shape))
+                # logger.info('preds: {}'.format(preds.shape))
                 out_label_ids = inputs[label_key].detach().cpu().numpy()
 
             else:
