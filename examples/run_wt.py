@@ -37,7 +37,7 @@ from tqdm import tqdm, trange
 
 
 from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
-                                  BertForSequenceClassification, BertTokenizer,
+                                  BertForNextSentencePrediction, BertTokenizer,
                                   XLMConfig, XLMForSequenceClassification,
                                   XLMTokenizer, XLNetConfig,
                                   XLNetForSequenceClassification,
@@ -56,7 +56,7 @@ logger = logging.getLogger(__name__)
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig)), ())
 
 MODEL_CLASSES = {
-    'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
+    'bert': (BertConfig, BertForNextSentencePrediction, BertTokenizer),
     'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
     # 'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
@@ -73,6 +73,8 @@ def set_seed(args):
 
 def train(args, train_dataset, model, tokenizer):
     """ Train the model """
+    label_key = 'next_sentence_label'  # labels
+
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter()
 
@@ -135,7 +137,7 @@ def train(args, train_dataset, model, tokenizer):
             inputs = {'input_ids':      batch[0],
                       'attention_mask': batch[1],
                       'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM don't use segment_ids
-                      'labels':         batch[3]}
+                      label_key:        batch[3]}
             outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
 
@@ -260,16 +262,12 @@ def evaluate(args, model, tokenizer, prefix=""):
                           label_key: batch[3]}
                 outputs = model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
-                logger.info('tmp_eval_loss: {}'.format(tmp_eval_loss))
-                logger.info('logits: {}'.format(logits))
-
                 eval_loss += tmp_eval_loss.mean().item()
 
             nb_eval_steps += 1
 
             if preds is None:
                 preds = logits.detach().cpu().numpy()
-                # logger.info('preds: {}'.format(preds.shape))
                 out_label_ids = inputs[label_key].detach().cpu().numpy()
 
             else:
@@ -427,14 +425,12 @@ def eval_birch_model(args):
             batch = tuple(t.to(args.device) for t in batch)
 
             with torch.no_grad():
-                logger.info('batch[0] shape: {}'.format(batch[0].size()))
                 inputs = {'input_ids': batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,
                           # 'next_sentence_label': batch[3]
                           }
                 logits = model(**inputs)
-                # logger.info('logits: {}'.format(logits))
             nb_eval_steps += 1
             labels = batch[3]
 
@@ -642,7 +638,6 @@ def main():
         model = model_class.from_pretrained(args.output_dir)
         tokenizer = tokenizer_class.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case)
         model.to(args.device)
-
 
     # Evaluation
     results = {}
