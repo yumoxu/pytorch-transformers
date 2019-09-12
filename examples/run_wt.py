@@ -434,15 +434,16 @@ def eval_birch_model(args):
                           # 'next_sentence_label': batch[3]
                           }
                 logits = model(**inputs)
-                logger.info('logits: {}'.format(logits))
+                # logger.info('logits: {}'.format(logits))
             nb_eval_steps += 1
+            labels = batch[3]
 
             if preds is None:
                 preds = logits.detach().cpu().numpy()
-                out_label_ids = inputs['next_sentence_label'].detach().cpu().numpy()
+                out_label_ids = labels.detach().cpu().numpy()
             else:
                 preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                out_label_ids = np.append(out_label_ids, inputs['next_sentence_label'].detach().cpu().numpy(), axis=0)
+                out_label_ids = np.append(out_label_ids, labels.detach().cpu().numpy(), axis=0)
 
         eval_loss = eval_loss / nb_eval_steps
         if args.output_mode == "classification":
