@@ -368,6 +368,21 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     return dataset
 
 
+def eval_birch_model(args):
+    birch_model_fp = '/afs/inf.ed.ac.uk/group/project/material/querysum/model/saved.qa_2'
+
+    logger.info('Load PyTorch model from {}'.format(birch_model_fp))
+    if not torch.cuda.is_available():  # cpu
+        state = torch.load(birch_model_fp, map_location='cpu')
+    else:
+        state = torch.load(birch_model_fp)
+
+    results = evaluate(args, model=state['model'], tokenizer=state['tokenizer'])
+
+    logger.info('Birch scores: {}'.format(state['scores']))
+    logger.info('Birch results: {:.4f}\t{:.4f}'.format(results['eval_loss'], 100 * results['f1']))
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -397,6 +412,9 @@ def main():
                         help="Whether to run training.")
     parser.add_argument("--do_eval", action='store_true',
                         help="Whether to run eval on the dev set.")
+    parser.add_argument("--do_eval_birch", action='store_true',
+                        help="Whether to run eval on the dev set.")
+
     parser.add_argument("--evaluate_during_training", action='store_true',
                         help="Rul evaluation during training at each logging step.")
     parser.add_argument("--do_lower_case", action='store_true',
@@ -560,6 +578,9 @@ def main():
             result = evaluate(args, model, tokenizer, prefix=global_step)
             result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
             results.update(result)
+
+    if args.do_eval_birch:
+        eval_birch_model(args)
 
     return results
 
