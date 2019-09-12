@@ -434,6 +434,7 @@ def eval_birch_model(args):
                           # XLM and RoBERTa don't use segment_ids
                           label_key: batch[3]}
                 logits = model(**inputs)
+                logger.info('logits: {}'.format(logits))
             nb_eval_steps += 1
 
             if preds is None:
