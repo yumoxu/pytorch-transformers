@@ -42,10 +42,10 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from test import eval_select
 from utils_bert_doc_vp import (compute_metrics, convert_vp_examples_to_features, output_modes, processors)
 
 from checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
+
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +70,6 @@ def set_seed(args):
 
 def train(args, train_dataset, model, tokenizer):
     """ Train the model """
-    label_key = 'next_sentence_label'  # labels
-
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter()
 
@@ -137,7 +135,7 @@ def train(args, train_dataset, model, tokenizer):
             inputs = {'input_ids':      batch[0],
                       'attention_mask': batch[1],
                       'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM don't use segment_ids
-                      label_key:        batch[3]}
+                      'doc_vocab':      batch[3]}
             outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
 
@@ -175,22 +173,22 @@ def train(args, train_dataset, model, tokenizer):
                     if not (args.local_rank == -1 and args.evaluate_during_training):
                         # Only evaluate when single GPU otherwise metrics may not average well
                         raise ValueError('Have to eval before saving model!')
+                    
+                    results = evaluate(args, model, tokenizer)
 
-                    best_score = eval_select(args, model, tokenizer, best_score, epoch+1)
-
-                    # record performance
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
+
                     if not os.path.exists(output_eval_file):
-                        headline = 'Step\tTrain\tEval\tMicroF1\n'
+                        headline = 'Step\tTrain\tEval\n'
                         io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
-                    record = '{}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, best_score)
+                    record = '{}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, results['eval_loss'])
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
                         'k': global_step,
-                        'v': best_score,
+                        'v': -results['eval_loss'],  # the smaller, the better
                         'max_n_checkpoint': 1,
                         # 'v': results['eval_loss'],
                     }
@@ -291,6 +289,18 @@ def evaluate(args, model, tokenizer, prefix=""):
             logger.info("  %s = %s", key, str(result[key]))
 
     return results
+
+
+def eval_select(args, model, tokenizer, best_score, epoch):
+    scores_dev = test(args, split='dev', model=model, tokenizer=tokenizer)
+    print_scores(scores_dev, mode='dev')
+
+    if scores_dev[1][0] > best_score:
+        best_score = scores_dev[1][0]
+        model_path = '{}_{}'.format(args.model_path, epoch)
+        save_checkpoint(epoch, model, tokenizer, scores_dev, model_path)
+
+    return best_score
 
 
 def load_and_cache_examples(args, task, tokenizer, evaluate=False):
