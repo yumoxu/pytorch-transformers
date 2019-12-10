@@ -42,10 +42,10 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from .test import eval_select, test
-from .utils_bert_doc_vp import (compute_metrics, convert_vp_examples_to_features, output_modes, processors)
+from test import eval_select
+from utils_bert_doc_vp import (compute_metrics, convert_vp_examples_to_features, output_modes, processors)
 
-from .checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
+from checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
 
 logger = logging.getLogger(__name__)
 
