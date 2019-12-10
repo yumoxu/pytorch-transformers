@@ -45,8 +45,8 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from my_utils_glue import (compute_metrics, convert_examples_to_features,
-                           output_modes, processors)
+from utils_answer_selection import (compute_metrics, convert_examples_to_features,
+                                    output_modes, processors)
 
 from checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
 
@@ -89,7 +89,8 @@ def train(args, train_dataset, model, tokenizer):
         t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
 
     # Prepare optimizer and schedule (linear warmup and decay)
-    no_decay = ['bias', 'LayerNorm.weight']
+    # no_decay = ['bias', 'LayerNorm.weight']  # original
+    no_decay = ['bias', 'gamma', 'beta']
     optimizer_grouped_parameters = [
         {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)], 'weight_decay': args.weight_decay},
         {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
@@ -383,6 +384,8 @@ def eval_birch_model(args):
     else:
         state = torch.load(birch_model_fp)
 
+    logger.info('Birch scores: {}'.format(state['scores']))
+
     model = state['model']
     model.to(args.device)
 
@@ -457,7 +460,7 @@ def eval_birch_model(args):
         for key in sorted(result.keys()):
             logger.info("  %s = %s", key, str(result[key]))
 
-    logger.info('Birch scores: {}'.format(state['scores']))
+
     logger.info('Birch results: {:.4f}\t{:.4f}'.format(results['eval_loss'], 100 * results['f1']))
 
 

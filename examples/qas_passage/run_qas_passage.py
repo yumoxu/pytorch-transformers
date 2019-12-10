@@ -42,14 +42,14 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from utils_squad import (read_squad_examples, convert_examples_to_features,
-                         RawResult, write_predictions,
-                         RawResultExtended, write_predictions_extended)
+from examples.utils_squad import (read_squad_examples, convert_examples_to_features,
+                                  RawResult, write_predictions,
+                                  RawResultExtended, write_predictions_extended)
 
 # The follwing import is the official SQuAD evaluation script (2.0).
 # You can remove it from the dependencies if you are using this script outside of the library
 # We've added it here for automated tests (see examples/test_examples.py file)
-from utils_squad_evaluate import EVAL_OPTS, main as evaluate_on_squad
+from examples.utils_squad_evaluate import EVAL_OPTS, main as evaluate_on_squad
 
 from checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
 
@@ -267,7 +267,7 @@ def evaluate(args, model, tokenizer, prefix=""):
                 result = RawResultExtended(unique_id            = unique_id,
                                            start_top_log_probs  = to_list(outputs[0][i]),
                                            start_top_index      = to_list(outputs[1][i]),
-                                           end_top_log_probs    = to_list(outputs[2][i]),
+                                           end_top_loxg_probs    = to_list(outputs[2][i]),
                                            end_top_index        = to_list(outputs[3][i]),
                                            cls_logits           = to_list(outputs[4][i]))
             else:
@@ -356,6 +356,18 @@ def load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=Fal
     if output_examples:
         return dataset, examples, features
     return dataset
+
+
+def inference(start, end, passage_start_logit, passage_end_logit):
+    sent_start_logit = passage_start_logit[start:end]  # n * 1
+    sent_end_logit = passage_end_logit[start:end]  # n * 1
+
+    score_mat = np.dot(sent_start_logit, sent_end_logit.T)  # n * n
+    score_mat = np.triu(score_mat, k=0)  # mask out elements where i < j
+
+    score = np.max(score_mat)
+
+    return score
 
 
 def main():

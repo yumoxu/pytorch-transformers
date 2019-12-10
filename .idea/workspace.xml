@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="" />
+    <list default="true" id="06e231f4-47ab-4869-ada8-080801473b74" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/examples/answer_selection/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/answer_selection/run_wt_f1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/qas_passage/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/checkpoint_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/answer_selection/checkpoint_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/my_utils_glue.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/answer_selection/utils_answer_selection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/run_qas_passage.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/qas_passage/run_qas_passage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/run_wt.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/answer_selection/run_wt.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +39,7 @@
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/examples/run_qas_shared.py&#10;mygl&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/examples/my_utils_glue.py&#10;my&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/examples/my_utils_glue.py&#10;mode&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/pytorch_transformers/modeling_bert.py&#10;bert&#9;FILE&#9;file:///Users/KevinXU/programming/git_yumoxu/pytorch-transformers/pytorch_transformers/tokenization_bert.py" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/examples/tests_samples" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/examples/answer_selection" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -42,9 +51,12 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/examples/qas_passage" />
+      <recent name="$PROJECT_DIR$/examples/answer_selection" />
       <recent name="$PROJECT_DIR$/examples" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/examples/answer_selection" />
       <recent name="$PROJECT_DIR$/examples/tests_samples" />
       <recent name="$PROJECT_DIR$/pytorch_transformers" />
     </key>
@@ -114,7 +126,9 @@
       <option name="presentableId" value="Default" />
       <updated>1566734196889</updated>
       <workItem from="1567177119937" duration="34129000" />
-      <workItem from="1568231342451" duration="12965000" />
+      <workItem from="1568231342451" duration="24343000" />
+      <workItem from="1568808224236" duration="8518000" />
+      <workItem from="1569935205729" duration="11003000" />
     </task>
     <servers />
   </component>
