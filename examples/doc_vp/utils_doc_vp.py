@@ -54,7 +54,7 @@ class InputExample(object):
 class InputExampleDocVP(object):
     """A single training/test example for simple sequence classification."""
 
-    def __init__(self, guid, tokens, doc_vocab=None):
+    def __init__(self, guid, tokens, segment_ids, doc_vocab=None):
         """Constructs a InputExample.
 
         Args:
@@ -66,7 +66,9 @@ class InputExampleDocVP(object):
         """
         self.guid = guid
         self.tokens = tokens
+        self.segment_ids = segment_ids
         self.doc_vocab = doc_vocab
+
 
 
 class InputFeatures(object):
@@ -223,9 +225,10 @@ class DocvpProcessor(DataProcessor):
             if i == 0:
                 continue
             guid = "%s-%s" % (set_type, i)
-            doc_vocab = line["doc_vocab"]
             tokens = line["tokens"]
-            example = InputExampleDocVP(guid=guid, tokens=tokens, doc_vocab=doc_vocab)
+            segment_ids = line["segment_ids"]
+            doc_vocab = line["doc_vocab"]
+            example = InputExampleDocVP(guid=guid, tokens=tokens, segment_ids=segment_ids, doc_vocab=doc_vocab)
             examples.append(example)
         return examples
 
@@ -706,11 +709,11 @@ def convert_vp_examples_to_features(examples, max_seq_length,
         if pad_on_left:
             input_ids = ([pad_token] * padding_length) + input_ids
             input_mask = ([0 if mask_padding_with_zero else 1] * padding_length) + input_mask
-            segment_ids = ([pad_token_segment_id] * padding_length) + segment_ids
+            segment_ids = ([pad_token_segment_id] * padding_length) + example.segment_ids
         else:
             input_ids = input_ids + ([pad_token] * padding_length)
             input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
-            segment_ids = segment_ids + ([pad_token_segment_id] * padding_length)
+            segment_ids = example.segment_ids + ([pad_token_segment_id] * padding_length)
 
         assert len(input_ids) == max_seq_length
         assert len(input_mask) == max_seq_length
