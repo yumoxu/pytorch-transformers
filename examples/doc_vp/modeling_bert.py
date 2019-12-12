@@ -1412,7 +1412,7 @@ class BertForVocabPrediction(BertPreTrainedModel):
     
         outputs = (doc_vocab_scores,) + outputs[2:]  # add hidden states and attention if they are here
         if doc_vocab is not None:
-            loss_fct = BCEWithLogitsLoss(ignore_index=-1)  # has sigmoid internally
+            loss_fct = BCEWithLogitsLoss()  # has sigmoid internally
             vocab_loss = loss_fct(doc_vocab_scores.view(-1, 2), doc_vocab.view(-1))
             outputs = (vocab_loss,) + outputs
 
