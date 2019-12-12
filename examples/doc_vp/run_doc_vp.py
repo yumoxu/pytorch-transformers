@@ -72,7 +72,7 @@ def set_seed(args):
 def train(args, train_dataset, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
-        tb_writer = SummaryWriter()
+        tb_writer = SummaryWriter(log_dir=args.log_dir)
 
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
     train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
@@ -167,7 +167,7 @@ def train(args, train_dataset, model, tokenizer):
                 if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                     tb_writer.add_scalar('lr', scheduler.get_lr()[0], global_step)
                     avg_loss = (tr_loss - logging_loss) / args.logging_steps
-                    tb_writer.add_scalar('loss', avg_loss, global_step)
+                    tb_writer.add_scalar('train_loss', avg_loss, global_step)
                     logging_loss = tr_loss
 
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
@@ -177,21 +177,25 @@ def train(args, train_dataset, model, tokenizer):
                         # Only evaluate when single GPU otherwise metrics may not average well
                         raise ValueError('Have to eval before saving model!')
                     
-                    results = evaluate(args, model, tokenizer)
-
+                    # results = evaluate(args, model, tokenizer)
+                    dev_loss = evaluate(args, model, tokenizer)
+                    # dev_loss = results['eval_loss']
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
 
                     if not os.path.exists(output_eval_file):
                         headline = 'Step\tTrain\tEval\n'
                         io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
-                    record = '{}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, results['eval_loss'])
+                    record = '{}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, dev_loss)
+                    tb_writer.add_scalar('dev_loss', dev_loss, global_step)
+
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                     update_params = {
                         'checkpoint_dict': checkpoint_dict,
                         'k': global_step,
-                        'v': -results['eval_loss'],  # the smaller, the better
+                        # 'v': -results['eval_loss'],  # the smaller, the better
+                        'v': -dev_loss,
                         'max_n_checkpoint': 1,
                         # 'v': results['eval_loss'],
                     }
@@ -265,30 +269,28 @@ def evaluate(args, model, tokenizer, prefix=""):
                 eval_loss += tmp_eval_loss.mean().item()
 
             nb_eval_steps += 1
-
-            if preds is None:
-                preds = logits.detach().cpu().numpy()
-                out_label_ids = inputs[label_key].detach().cpu().numpy()
-
-            else:
-                preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
-                out_label_ids = np.append(out_label_ids, inputs[label_key].detach().cpu().numpy(), axis=0)
+            # if preds is None:
+            #     preds = logits.detach().cpu().numpy()
+            #     out_label_ids = inputs['doc_vocab'].detach().cpu().numpy()
+            # else:
+            #     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
+            #     out_label_ids = np.append(out_label_ids, inputs['doc_vocab'].detach().cpu().numpy(), axis=0)
 
         eval_loss = eval_loss / nb_eval_steps
-        if args.output_mode == "classification":
-            preds = np.argmax(preds, axis=1)
-        elif args.output_mode == "regression":
-            preds = np.squeeze(preds)
-        result = compute_metrics(eval_task, preds, out_label_ids)
-        result['eval_loss'] = eval_loss
+        # if args.output_mode == "classification":
+            # preds = np.argmax(preds, axis=1)
+        # elif args.output_mode == "regression":
+            # preds = np.squeeze(preds)
+        # result = compute_metrics(eval_task, preds, out_label_ids)
+        # result['eval_loss'] = eval_loss
+        # results.update(result)
 
-        results.update(result)
+        # logger.info("***** Eval results {} *****".format(prefix))
+        # for key in sorted(result.keys()):
+        #     logger.info("  %s = %s", key, str(result[key]))
 
-        logger.info("***** Eval results {} *****".format(prefix))
-        for key in sorted(result.keys()):
-            logger.info("  %s = %s", key, str(result[key]))
-
-    return results
+    # return results
+    return eval_loss
 
 
 def load_and_cache_examples(args, task, tokenizer, evaluate=False):
@@ -366,6 +368,8 @@ def main():
                         help="The name of the task to train selected in the list: " + ", ".join(processors.keys()))
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model predictions and checkpoints will be written.")
+    parser.add_argument("--log_dir", default=None, type=str, required=True,
+                        help="The log directory where the model predictions and checkpoints will be written.")
 
     ## Other parameters
     parser.add_argument("--config_name", default="", type=str,
