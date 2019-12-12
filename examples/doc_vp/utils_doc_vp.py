@@ -197,12 +197,12 @@ class DocvpProcessor(DataProcessor):
         """See base class."""
         logger.info("LOOKING AT {}".format(os.path.join(data_dir, "train.json")))
         return self._create_examples(
-            self._read_json(os.path.join(data_dir, "train.json")))
+            self._read_json(os.path.join(data_dir, "train.json")), "train")
 
     def get_dev_examples(self, data_dir):
         """See base class."""
         return self._create_examples(
-            self._read_json(os.path.join(data_dir, "dev.json")))
+            self._read_json(os.path.join(data_dir, "dev.json")), "dev")
 
     def _read_json(self, input_file):
         """Reads a json file; each line is a json string"""
