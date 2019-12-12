@@ -34,7 +34,6 @@ from tqdm import tqdm, trange
 
 
 from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertTokenizer,
-                                  BertForVocabPrediction, 
                                 #   BertForNextSentencePrediction, 
                                   XLMConfig, XLMForSequenceClassification,
                                   XLMTokenizer, XLNetConfig,
@@ -44,8 +43,8 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertTokenizer,
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
 from utils_doc_vp import (compute_metrics, convert_vp_examples_to_features, output_modes, processors)
-
 from checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
+from modeling_bert import BertForVocabPrediction
 
 
 logger = logging.getLogger(__name__)
