@@ -219,9 +219,6 @@ class DocvpProcessor(DataProcessor):
             Examples are nested and organized via passages.
         """
         examples = []
-
-        _examples = []  # buffer for the last subset of examples
-        _qid = None  # buffer for the last qid
         for (i, line) in enumerate(lines):
             if i == 0:
                 continue
@@ -229,7 +226,7 @@ class DocvpProcessor(DataProcessor):
             doc_vocab = line["doc_vocab"]
             tokens = line["tokens"]
             example = InputExampleDocVP(guid=guid, tokens=tokens, doc_vocab=doc_vocab)
-            _examples.append(example)
+            examples.append(example)
         return examples
 
 

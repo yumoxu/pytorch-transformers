@@ -323,6 +323,9 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     else:
         logger.info("Creating features from dataset file at %s", args.data_dir)
         examples = processor.get_dev_examples(args.data_dir) if evaluate else processor.get_train_examples(args.data_dir)
+
+        logger.info('examples: {}'.format(len(examples)))
+
         features = convert_vp_examples_to_features(
             examples, args.max_seq_length, tokenizer, output_mode,
             cls_token_at_end=bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
