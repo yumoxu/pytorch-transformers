@@ -213,8 +213,6 @@ def train(args, train_dataset, model, tokenizer):
                 epoch_iterator.close()
                 break
 
-        best_score = eval_select(args, model, tokenizer, best_score, epoch)
-
         if args.max_steps > 0 and global_step > args.max_steps:
             train_iterator.close()
             break
@@ -231,7 +229,6 @@ def evaluate(args, model, tokenizer, prefix=""):
     eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
 
     results = {}
-    label_key = 'next_sentence_label'  # labels
     for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
         eval_dataset = load_and_cache_examples(args, eval_task, tokenizer, evaluate=True)
 
@@ -259,7 +256,7 @@ def evaluate(args, model, tokenizer, prefix=""):
                 inputs = {'input_ids':      batch[0],
                           'attention_mask': batch[1],
                           'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
-                          label_key: batch[3]}
+                          'doc_vocab':      batch[3]}
                 outputs = model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
                 eval_loss += tmp_eval_loss.mean().item()
@@ -289,18 +286,6 @@ def evaluate(args, model, tokenizer, prefix=""):
             logger.info("  %s = %s", key, str(result[key]))
 
     return results
-
-
-def eval_select(args, model, tokenizer, best_score, epoch):
-    scores_dev = test(args, split='dev', model=model, tokenizer=tokenizer)
-    print_scores(scores_dev, mode='dev')
-
-    if scores_dev[1][0] > best_score:
-        best_score = scores_dev[1][0]
-        model_path = '{}_{}'.format(args.model_path, epoch)
-        save_checkpoint(epoch, model, tokenizer, scores_dev, model_path)
-
-    return best_score
 
 
 def load_and_cache_examples(args, task, tokenizer, evaluate=False):
