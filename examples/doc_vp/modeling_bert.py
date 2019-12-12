@@ -1403,7 +1403,7 @@ class BertForVocabPrediction(BertPreTrainedModel):
                 position_ids=None, head_mask=None):
         outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                             attention_mask=attention_mask, head_mask=head_mask)
-        logger.info('outputs: {}'.format(outputs.size()))
+        # logger.info('outputs: {}'.format(outputs.size()))
         pooled_output = outputs[1]
         logger.info('pooled_output: {}'.format(pooled_output.size()))
 
