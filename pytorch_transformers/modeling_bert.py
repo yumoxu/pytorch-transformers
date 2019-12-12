@@ -1386,7 +1386,7 @@ class BertForVocabPrediction(BertPreTrainedModel):
     Examples::
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased')
+        model = BertForVocabPrediction.from_pretrained('bert-base-uncased')
         input_ids = torch.tensor(tokenizer.encode("Hello, my dog is cute")).unsqueeze(0)  # Batch size 1
         outputs = model(input_ids)
         seq_relationship_scores = outputs[0]
@@ -1399,7 +1399,7 @@ class BertForVocabPrediction(BertPreTrainedModel):
         self.cls = nn.Linear(config.hidden_size, config.vocab_size_or_config_json_file)
         self.apply(self.init_weights)
 
-    def forward(self, input_ids, token_type_ids=None, attention_mask=None, doc_labels=None,
+    def forward(self, input_ids, token_type_ids=None, attention_mask=None, doc_vocab=None,
                 position_ids=None, head_mask=None):
         outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                             attention_mask=attention_mask, head_mask=head_mask)
@@ -1408,9 +1408,9 @@ class BertForVocabPrediction(BertPreTrainedModel):
         doc_vocab_scores = self.cls(pooled_output)
         
         outputs = (doc_vocab_scores,) + outputs[2:]  # add hidden states and attention if they are here
-        if doc_labels is not None:
+        if doc_vocab is not None:
             loss_fct = BCEWithLogitsLoss(ignore_index=-1)  # has sigmoid internally
-            vocab_loss = loss_fct(doc_vocab_scores.view(-1, 2), doc_labels.view(-1))
+            vocab_loss = loss_fct(doc_vocab_scores.view(-1, 2), doc_vocab.view(-1))
             outputs = (vocab_loss,) + outputs
 
         return outputs  # (next_sentence_loss), seq_relationship_score, (hidden_states), (attentions)
