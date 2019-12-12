@@ -33,8 +33,9 @@ from tensorboardX import SummaryWriter
 from tqdm import tqdm, trange
 
 
-from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
-                                  BertForNextSentencePrediction, BertTokenizer,
+from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertTokenizer,
+                                  BertForVocabPrediction, 
+                                #   BertForNextSentencePrediction, 
                                   XLMConfig, XLMForSequenceClassification,
                                   XLMTokenizer, XLNetConfig,
                                   XLNetForSequenceClassification,
@@ -53,7 +54,8 @@ logger = logging.getLogger(__name__)
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig)), ())
 
 MODEL_CLASSES = {
-    'bert': (BertConfig, BertForNextSentencePrediction, BertTokenizer),
+    # 'bert': (BertConfig, BertForNextSentencePrediction, BertTokenizer),
+    'bert': (BertConfig, BertForVocabPrediction, BertTokenizer),
     'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
     # 'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
@@ -336,6 +338,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
     all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)
     all_segment_ids = torch.tensor([f.segment_ids for f in features], dtype=torch.long)
+    
     if output_mode == "classification":
         all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.long)
     elif output_mode == "regression":
