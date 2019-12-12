@@ -226,11 +226,7 @@ class DocvpProcessor(DataProcessor):
             if i == 0:
                 continue
             guid = "%s-%s" % (set_type, i)
-            # doc_vocab = eval(line["doc_vocab"])
-            # tokens = eval(line["tokens"])
-
             doc_vocab = line["doc_vocab"]
-            print('doc_vocab: {}'.format(type(doc_vocab)))
             tokens = line["tokens"]
             example = InputExampleDocVP(guid=guid, tokens=tokens, doc_vocab=doc_vocab)
             _examples.append(example)
