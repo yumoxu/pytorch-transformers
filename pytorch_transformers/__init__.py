@@ -17,7 +17,8 @@ from .modeling_bert import (BertConfig, BertPreTrainedModel, BertModel, BertForP
                             BertForSequenceClassification, BertForMultipleChoice,
                             BertForTokenClassification, BertForQuestionAnswering,
                             load_tf_weights_in_bert, BERT_PRETRAINED_MODEL_ARCHIVE_MAP,
-                            BERT_PRETRAINED_CONFIG_ARCHIVE_MAP)
+                            BERT_PRETRAINED_CONFIG_ARCHIVE_MAP,
+                            BertForVocabPrediction)
 
 from .modeling_openai import (OpenAIGPTConfig, OpenAIGPTPreTrainedModel, OpenAIGPTModel,
                               OpenAIGPTLMHeadModel, OpenAIGPTDoubleHeadsModel,
