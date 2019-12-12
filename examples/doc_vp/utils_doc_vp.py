@@ -195,7 +195,7 @@ class DocvpProcessor(DataProcessor):
     """Processor for the Document Vocab Prediction data set."""
     def get_train_examples(self, data_dir):
         """See base class."""
-        logger.info("LOOKING AT {}".format(os.path.join(data_dir, "train.tsv")))
+        logger.info("LOOKING AT {}".format(os.path.join(data_dir, "train.json")))
         return self._create_examples(
             self._read_json(os.path.join(data_dir, "train.json")))
 
@@ -203,10 +203,6 @@ class DocvpProcessor(DataProcessor):
         """See base class."""
         return self._create_examples(
             self._read_json(os.path.join(data_dir, "dev.json")))
-
-    def get_labels(self):
-        """See base class."""
-        return BertTokenizer
 
     def _read_json(self, input_file):
         """Reads a json file; each line is a json string"""
@@ -741,7 +737,6 @@ def convert_vp_examples_to_features(examples, max_seq_length,
                               segment_ids=segment_ids,
                               label_id=label_id))
     return features
-
 
 
 def _truncate_seq_pair(tokens_a, tokens_b, max_length):
