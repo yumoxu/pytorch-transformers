@@ -1396,7 +1396,7 @@ class BertForVocabPrediction(BertPreTrainedModel):
         super(BertForVocabPrediction, self).__init__(config)
 
         self.bert = BertModel(config)
-        self.cls = nn.Linear(config.hidden_size, config.vocab_size_or_config_json_file)
+        self.cls = nn.Linear(config.hidden_size, config.vocab_size)
         self.apply(self.init_weights)
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, doc_vocab=None,
