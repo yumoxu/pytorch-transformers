@@ -1403,10 +1403,13 @@ class BertForVocabPrediction(BertPreTrainedModel):
                 position_ids=None, head_mask=None):
         outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                             attention_mask=attention_mask, head_mask=head_mask)
+        logger.info('outputs: {}'.format(outputs.size()))
         pooled_output = outputs[1]
+        logger.info('pooled_output: {}'.format(pooled_output.size()))
 
         doc_vocab_scores = self.cls(pooled_output)
-        
+        logger.info('doc_vocab_scores: {}'.format(doc_vocab_scores.size()))
+    
         outputs = (doc_vocab_scores,) + outputs[2:]  # add hidden states and attention if they are here
         if doc_vocab is not None:
             loss_fct = BCEWithLogitsLoss(ignore_index=-1)  # has sigmoid internally
