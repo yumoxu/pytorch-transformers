@@ -88,11 +88,15 @@ def train(args, model, tokenizer):
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter(log_dir=args.log_dir)
 
+    temp_path = os.path.join(args.data_dir, 'temp')
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
     train_dataset = PregeneratedDataset(training_path=args.data_dir, 
                                         num_samples=args.num_training_examples,
                                         seq_len=args.max_seq_length,
                                         tokenizer=tokenizer,
-                                        reduce_memory=args.reduce_memory)
+                                        reduce_memory=args.reduce_memory,
+                                        temp_path=temp_path)
 
     if args.local_rank == -1:
         train_sampler = RandomSampler(train_dataset)
@@ -223,7 +227,7 @@ def train(args, model, tokenizer):
 
 
 class PregeneratedDataset(Dataset):
-    def __init__(self, training_path, tokenizer, num_samples, seq_len, reduce_memory=False):
+    def __init__(self, training_path, tokenizer, num_samples, seq_len, reduce_memory=False, temp_path=None):
         self.vocab = tokenizer.vocab
         self.vocab_size = len(self.vocab)
 
@@ -233,7 +237,7 @@ class PregeneratedDataset(Dataset):
         self.temp_dir = None
         self.working_dir = None
         if reduce_memory:
-            self.temp_dir = TemporaryDirectory()
+            self.temp_dir = TemporaryDirectory(dir=temp_path)
             self.working_dir = Path(self.temp_dir.name)
             logger.info(f'Initialized working_dir: {self.working_dir}')
             input_ids = np.memmap(filename=self.working_dir/'input_ids.memmap',
