@@ -70,35 +70,13 @@ def set_seed(args):
         torch.cuda.manual_seed_all(args.seed)
 
 
-def save_model(args, global_step, model):
-    # init dir
-    output_dir = os.path.join(args.output_dir, 'checkpoint-{}'.format(global_step))
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    # save
-    model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
-    model_to_save.save_pretrained(output_dir)
-    torch.save(args, os.path.join(output_dir, 'training_args.bin'))
-    logger.info("Saving model checkpoint to %s", output_dir)
-
-
-def train(args, model, tokenizer):
+def train(args, train_dataset, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter(log_dir=args.log_dir)
 
-    train_dataset = PregeneratedDataset(training_path=args.pregenerated_data, 
-                                        num_training_examples=args.num_training_examples,
-                                        seq_len=args.max_seq_length,
-                                        tokenizer=tokenizer,
-                                        reduce_memory=args.reduce_memory)
-
-    if args.local_rank == -1:
-        train_sampler = RandomSampler(train_dataset)
-    else:
-        train_sampler = DistributedSampler(train_dataset)
-    
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
+    train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
 
     if args.max_steps > 0:
@@ -147,7 +125,6 @@ def train(args, model, tokenizer):
     best_score = 0
 
     checkpoint_dict = dict()  # {n_batches: f1}
-    output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
 
     model.zero_grad()
     train_iterator = trange(int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
@@ -194,26 +171,55 @@ def train(args, model, tokenizer):
                     tb_writer.add_scalar('train_loss', avg_loss, global_step)
                     logging_loss = tr_loss
 
-                    if not os.path.exists(output_eval_file):
-                        headline = 'Step\tTrain\n'
-                        io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
-
-                    record = '{}\t{:.4f}\n'.format(global_step, avg_loss)
-                    io.open(output_eval_file, 'a', encoding='utf-8').write(record)
-
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
                     # Save model checkpoint
                     # Evaluate before saving
                     if not (args.local_rank == -1 and args.evaluate_during_training):
                         # Only evaluate when single GPU otherwise metrics may not average well
-                        raise ValueError('Have to eval before saving model!')                    
-                    save_model(args, global_step, model)
+                        raise ValueError('Have to eval before saving model!')
+                    
+                    # results = evaluate(args, model, tokenizer)
+                    dev_loss = evaluate(args, model, tokenizer)
+                    # dev_loss = results['eval_loss']
+                    output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
+
+                    if not os.path.exists(output_eval_file):
+                        headline = 'Step\tTrain\tEval\n'
+                        io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
+
+                    record = '{}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss, dev_loss)
+                    tb_writer.add_scalar('dev_loss', dev_loss, global_step)
+
+                    io.open(output_eval_file, 'a', encoding='utf-8').write(record)
+
+                    update_params = {
+                        'checkpoint_dict': checkpoint_dict,
+                        'k': global_step,
+                        # 'v': -results['eval_loss'],  # the smaller, the better
+                        'v': -dev_loss,
+                        'max_n_checkpoint': 1,
+                        # 'v': results['eval_loss'],
+                    }
+                    checkpoint_dict, update, _ = update_checkpoint_dict(**update_params)
+
+                    if update:
+                        # init dir
+                        output_dir = os.path.join(args.output_dir, 'checkpoint-{}'.format(global_step))
+                        if not os.path.exists(output_dir):
+                            os.makedirs(output_dir)
+
+                        # save
+                        model_to_save = model.module if hasattr(model, 'module') else model  # Take care of distributed/parallel training
+                        model_to_save.save_pretrained(output_dir)
+                        torch.save(args, os.path.join(output_dir, 'training_args.bin'))
+                        logger.info("Saving model checkpoint to %s", output_dir)
+
+                        # clean
+                        clean_outdated_checkpoints(args.output_dir, checkpoint_dict)
 
             if args.max_steps > 0 and global_step > args.max_steps:
                 epoch_iterator.close()
                 break
-
-            save_model(args, global_step, model)  # save model for each epoch
 
         if args.max_steps > 0 and global_step > args.max_steps:
             train_iterator.close()
@@ -221,18 +227,86 @@ def train(args, model, tokenizer):
 
     if args.local_rank in [-1, 0]:
         tb_writer.close()
-    
+
     return global_step, tr_loss / global_step
 
 
+def evaluate(args, model, tokenizer, prefix=""):
+    # Loop to handle MNLI double evaluation (matched, mis-matched)
+    eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
+    eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
+
+    results = {}
+    for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
+        eval_dataset = load_and_cache_examples(args, eval_task, tokenizer, evaluate=True)
+
+        if not os.path.exists(eval_output_dir) and args.local_rank in [-1, 0]:
+            os.makedirs(eval_output_dir)
+
+        args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
+        # Note that DistributedSampler samples randomly
+        eval_sampler = SequentialSampler(eval_dataset) if args.local_rank == -1 else DistributedSampler(eval_dataset)
+        eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
+
+        # Eval!
+        logger.info("***** Running evaluation {} *****".format(prefix))
+        logger.info("  Num examples = %d", len(eval_dataset))
+        logger.info("  Batch size = %d", args.eval_batch_size)
+        eval_loss = 0.0
+        nb_eval_steps = 0
+        preds = None
+        out_label_ids = None
+        for batch in tqdm(eval_dataloader, desc="Evaluating"):
+            model.eval()
+            batch = tuple(t.to(args.device) for t in batch)
+
+            with torch.no_grad():
+                inputs = {'input_ids':      batch[0],
+                          'attention_mask': batch[1],
+                          'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM and RoBERTa don't use segment_ids
+                          'doc_vocab':      batch[3]}
+                outputs = model(**inputs)
+                tmp_eval_loss, logits = outputs[:2]
+                eval_loss += tmp_eval_loss.mean().item()
+
+            nb_eval_steps += 1
+            # if preds is None:
+            #     preds = logits.detach().cpu().numpy()
+            #     out_label_ids = inputs['doc_vocab'].detach().cpu().numpy()
+            # else:
+            #     preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
+            #     out_label_ids = np.append(out_label_ids, inputs['doc_vocab'].detach().cpu().numpy(), axis=0)
+
+        eval_loss = eval_loss / nb_eval_steps
+        # if args.output_mode == "classification":
+            # preds = np.argmax(preds, axis=1)
+        # elif args.output_mode == "regression":
+            # preds = np.squeeze(preds)
+        # result = compute_metrics(eval_task, preds, out_label_ids)
+        # result['eval_loss'] = eval_loss
+        # results.update(result)
+
+        # logger.info("***** Eval results {} *****".format(prefix))
+        # for key in sorted(result.keys()):
+        #     logger.info("  %s = %s", key, str(result[key]))
+
+    # return results
+    return eval_loss
+
+
+
 class PregeneratedDataset(Dataset):
-    def __init__(self, training_path, tokenizer, num_training_examples, seq_len, reduce_memory=False):
+    def __init__(self, training_path, epoch, tokenizer, num_data_epochs, reduce_memory=False):
         self.vocab = tokenizer.vocab
-        self.vocab_size = len(self.vocab)
-
-        data_file = training_path / 'all.json'
-        assert data_file.is_file()
-
+        self.tokenizer = tokenizer
+        self.epoch = epoch
+        self.data_epoch = epoch % num_data_epochs
+        data_file = training_path / f"epoch_{self.data_epoch}.json"
+        metrics_file = training_path / f"epoch_{self.data_epoch}_metrics.json"
+        assert data_file.is_file() and metrics_file.is_file()
+        metrics = json.loads(metrics_file.read_text())
+        num_samples = metrics['num_training_examples']
+        seq_len = metrics['max_seq_len']
         self.temp_dir = None
         self.working_dir = None
         if reduce_memory:
@@ -244,14 +318,15 @@ class PregeneratedDataset(Dataset):
                                     shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
             segment_ids = np.memmap(filename=self.working_dir/'segment_ids.memmap',
                                     shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
-            label_ids = np.memmap(filename=self.working_dir/'label_ids.memmap',
-                                  shape=(num_samples, tokenizer.vocab_size), mode='w+', dtype=np.float)
-            label_ids[:] = -1
+            label_id = np.memmap(filename=self.working_dir/'lm_label_ids.memmap',
+                                 shape=(num_samples, seq_len), mode='w+', dtype=np.int32)
+            label_id[:] = -1
         else:
             input_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.int32)
             input_masks = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
             segment_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
-            label_ids = np.full(shape=(num_samples, tokenizer.vocab_size), dtype=np.int32, fill_value=-1)
+            label_id = np.full(shape=(num_samples, seq_len), dtype=np.int32, fill_value=-1)
+        logging.info(f"Loading training examples for epoch {epoch}")
         with data_file.open() as f:
             for i, line in enumerate(tqdm(f, total=num_samples, desc="Training examples")):
                 line = line.strip()
@@ -260,7 +335,7 @@ class PregeneratedDataset(Dataset):
                 input_ids[i] = features.input_ids
                 segment_ids[i] = features.segment_ids
                 input_masks[i] = features.input_mask
-                label_ids[i] = features.label_ids
+                label_id[i] = features.label_id
         assert i == num_samples - 1  # Assert that the sample count metric was true
         logging.info("Loading complete!")
         self.num_samples = num_samples
@@ -268,7 +343,8 @@ class PregeneratedDataset(Dataset):
         self.input_ids = input_ids
         self.input_masks = input_masks
         self.segment_ids = segment_ids
-        self.label_ids = label_ids
+        self.label_id = label_id
+        self.is_nexts = is_nexts
 
     def __len__(self):
         return self.num_samples
@@ -277,7 +353,69 @@ class PregeneratedDataset(Dataset):
         return (torch.tensor(self.input_ids[item].astype(np.int64)),
                 torch.tensor(self.input_masks[item].astype(np.int64)),
                 torch.tensor(self.segment_ids[item].astype(np.int64)),
-                torch.tensor(self.label_ids[item].astype(np.float)))
+                torch.tensor(self.label_id[item].astype(np.int64)))
+
+
+def load_and_cache_examples(args, task, tokenizer, evaluate=False):
+    if args.local_rank not in [-1, 0]:
+        torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
+
+    processor = processors[task]()
+    output_mode = output_modes[task]
+    # Load data features from cache or dataset file
+
+    cached_features_file = os.path.join(args.data_dir, 'cached_{}_{}_{}_{}'.format(
+        'dev' if evaluate else 'train',
+        list(filter(None, args.model_name_or_path.split('/'))).pop(),
+        str(args.max_seq_length),
+        'vp'))
+
+    if os.path.exists(cached_features_file):
+        logger.info("Loading features from cached file %s", cached_features_file)
+        features = torch.load(cached_features_file)
+    else:
+        logger.info("Creating features from dataset file at %s", args.data_dir)
+        examples = processor.get_dev_examples(args.data_dir) if evaluate else processor.get_train_examples(args.data_dir)
+
+        logger.info('examples: {}'.format(len(examples)))
+
+        features = convert_vp_examples_to_features(
+            examples, args.max_seq_length, tokenizer, output_mode,
+            cls_token_at_end=bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
+            cls_token=tokenizer.cls_token,
+            cls_token_segment_id=2 if args.model_type in ['xlnet'] else 0,
+            sep_token=tokenizer.sep_token,
+            sep_token_extra=bool(args.model_type in ['roberta']),           # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+            pad_on_left=bool(args.model_type in ['xlnet']),                 # pad on the left for xlnet
+            pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
+            pad_token_segment_id=4 if args.model_type in ['xlnet'] else 0,
+        )
+
+        logger.info('features: {}'.format(len(features)))
+
+        if args.local_rank in [-1, 0]:
+            logger.info("Saving features into cached file %s", cached_features_file)
+            torch.save(features, cached_features_file)
+
+    if args.local_rank == 0:
+        torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache\
+    
+    # Convert to Tensors and build dataset
+    all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
+    all_input_mask = torch.tensor([f.input_mask for f in features], dtype=torch.long)
+    all_segment_ids = torch.tensor([f.segment_ids for f in features], dtype=torch.long)
+    
+    # if output_mode == "classification":
+        # all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.long)
+    # elif output_mode == "regression":
+        # all_label_ids = torch.tensor([f.label_id for f in features], dtype=torch.float)
+    all_label_ids = torch.tensor([f.label_ids for f in features], dtype=torch.float)
+    # logger.info('all_input_ids: {}'.format(all_input_ids.size()))
+
+    dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+
+    return dataset
+
 
 
 def main():
@@ -425,7 +563,8 @@ def main():
 
     # Training
     if args.do_train:
-        global_step, tr_loss = train(args, model, tokenizer)
+        train_dataset = load_and_cache_examples(args, args.task_name, tokenizer, evaluate=False)
+        global_step, tr_loss = train(args, train_dataset, model, tokenizer)
         logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
     # Saving best-practices: if you use defaults names for the model, you can reload it using from_pretrained()
@@ -448,6 +587,25 @@ def main():
         model = model_class.from_pretrained(args.output_dir)
         tokenizer = tokenizer_class.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case)
         model.to(args.device)
+
+
+    # Evaluation
+    results = {}
+    if args.do_eval and args.local_rank in [-1, 0]:
+        checkpoints = [args.output_dir]
+        if args.eval_all_checkpoints:
+            checkpoints = list(os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + '/**/' + WEIGHTS_NAME, recursive=True)))
+            logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
+        logger.info("Evaluate the following checkpoints: %s", checkpoints)
+        for checkpoint in checkpoints:
+            global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
+            model = model_class.from_pretrained(checkpoint)
+            model.to(args.device)
+            result = evaluate(args, model, tokenizer, prefix=global_step)
+            result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
+            results.update(result)
+
+    return results
 
 
 if __name__ == "__main__":
