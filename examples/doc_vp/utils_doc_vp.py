@@ -455,36 +455,20 @@ def convert_vp_examples_to_features(examples, max_seq_length,
 
 
 def convert_vp_example_to_features(example, max_seq_length,
-                                   tokenizer, output_mode,
-                                   cls_token_at_end=False,
-                                   cls_token='[CLS]',
-                                   cls_token_segment_id=1,
-                                   sep_token='[SEP]',
-                                   sep_token_extra=False,
-                                   pad_on_left=False,
+                                   tokenizer,
                                    pad_token=0,
                                    pad_token_segment_id=0,
-                                   sequence_a_segment_id=0,
-                                   sequence_b_segment_id=1,
                                    mask_padding_with_zero=True):
     """ Loads a data file into a list of `InputBatch`s
-        `cls_token_at_end` define the location of the CLS token:
-            - False (Default, BERT/XLM pattern): [CLS] + A + [SEP] + B + [SEP]
-            - True (XLNet/GPT pattern): A + [SEP] + B + [SEP] + [CLS]
-        `cls_token_segment_id` define the segment id associated to the CLS token (0 for BERT, 2 for XLNet)
     """
     input_ids = tokenizer.convert_tokens_to_ids(example.tokens)
     input_mask = [1 if mask_padding_with_zero else 0] * len(input_ids)
     # Zero-pad up to the sequence length.
     padding_length = max_seq_length - len(input_ids)
-    if pad_on_left:
-        input_ids = ([pad_token] * padding_length) + input_ids
-        input_mask = ([0 if mask_padding_with_zero else 1] * padding_length) + input_mask
-        segment_ids = ([pad_token_segment_id] * padding_length) + example.segment_ids
-    else:
-        input_ids = input_ids + ([pad_token] * padding_length)
-        input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
-        segment_ids = example.segment_ids + ([pad_token_segment_id] * padding_length)
+
+    input_ids = input_ids + ([pad_token] * padding_length)
+    input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
+    segment_ids = example.segment_ids + ([pad_token_segment_id] * padding_length)
 
     assert len(input_ids) == max_seq_length
     assert len(input_mask) == max_seq_length

@@ -250,7 +250,7 @@ class PregeneratedDataset(Dataset):
                                     shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
             logger.info('Initialized placeholders with memmap: segment_ids')
             label_ids = np.memmap(filename=self.working_dir/'label_ids.memmap',
-                                  shape=(num_samples, tokenizer.vocab_size), mode='w+', dtype=np.float)
+                                  shape=(num_samples, tokenizer.vocab_size), mode='w+', dtype=np.int32)
             label_ids[:] = -1
             logger.info('Initialized placeholders with memmap: label_ids')
         else:
@@ -258,6 +258,7 @@ class PregeneratedDataset(Dataset):
             input_masks = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
             segment_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
             label_ids = np.full(shape=(num_samples, tokenizer.vocab_size), dtype=np.int32, fill_value=-1)
+        
         with data_file.open() as f:
             for i, line in enumerate(tqdm(f, total=num_samples, desc="Training examples")):
                 line = line.strip()
