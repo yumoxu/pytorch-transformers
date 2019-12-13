@@ -311,6 +311,8 @@ def main():
     parser.add_argument("--reduce_memory", action="store_true",
                         help="Store training data as on-disc memmaps to massively reduce memory usage")
 
+    parser.add_argument("--num_training_examples", default=1604146, type=int,
+                        help="Training set size.")
     parser.add_argument("--per_gpu_train_batch_size", default=8, type=int,
                         help="Batch size per GPU/CPU for training.")
     parser.add_argument("--per_gpu_eval_batch_size", default=8, type=int,
