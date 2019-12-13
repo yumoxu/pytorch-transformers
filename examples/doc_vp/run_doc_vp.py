@@ -227,7 +227,7 @@ class PregeneratedDataset(Dataset):
         self.vocab = tokenizer.vocab
         self.vocab_size = len(self.vocab)
 
-        data_file = training_path / 'all.json'
+        data_file = Path(training_path) / 'all.json'
         assert data_file.is_file()
 
         self.temp_dir = None
