@@ -459,23 +459,24 @@ def convert_vp_example_to_features(example, max_seq_length,
                                    pad_token=0,
                                    pad_token_segment_id=0,
                                    mask_padding_with_zero=True):
-    """ Loads a data file into a list of `InputBatch`s
+    """ Covert a json-format example to features.
     """
-    input_ids = tokenizer.convert_tokens_to_ids(example.tokens)
+
+    input_ids = tokenizer.convert_tokens_to_ids(example['tokens'])
     input_mask = [1 if mask_padding_with_zero else 0] * len(input_ids)
     # Zero-pad up to the sequence length.
     padding_length = max_seq_length - len(input_ids)
 
     input_ids = input_ids + ([pad_token] * padding_length)
     input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
-    segment_ids = example.segment_ids + ([pad_token_segment_id] * padding_length)
+    segment_ids = example['segment_ids'] + ([pad_token_segment_id] * padding_length)
 
     assert len(input_ids) == max_seq_length
     assert len(input_mask) == max_seq_length
     assert len(segment_ids) == max_seq_length
 
     label_ids = [0] * tokenizer.vocab_size
-    doc_vocab = tokenizer.convert_tokens_to_ids(example.doc_vocab)
+    doc_vocab = tokenizer.convert_tokens_to_ids(example['doc_vocab'])
     for token_id in doc_vocab:
         label_ids[token_id] = 1
 
