@@ -480,7 +480,7 @@ def convert_vp_example_to_features(example, max_seq_length,
     for token_id in doc_vocab:
         label_ids[token_id] = 1
 
-    features = InputFeatures(input_ids=input_ids, input_mask=input_mask, segment_ids=segment_ids, label_id=label_ids)
+    features = InputFeatures(input_ids=input_ids, input_mask=input_mask, segment_ids=segment_ids, label_ids=label_ids)
     return features
 
 
