@@ -241,15 +241,18 @@ class PregeneratedDataset(Dataset):
             self.working_dir = Path(self.temp_dir.name)
             logger.info(f'Initialized working_dir: {self.working_dir}')
             input_ids = np.memmap(filename=self.working_dir/'input_ids.memmap',
-                                  shape=(num_samples, seq_len), mode='w+', dtype=np.int32, )
+                                  shape=(num_samples, seq_len), mode='w+', dtype=np.int32)
+            logger.info('Initialized placeholders with memmap: input_ids')
             input_masks = np.memmap(filename=self.working_dir/'input_masks.memmap',
                                     shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
+            logger.info('Initialized placeholders with memmap: input_masks')
             segment_ids = np.memmap(filename=self.working_dir/'segment_ids.memmap',
                                     shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
+            logger.info('Initialized placeholders with memmap: segment_ids')
             label_ids = np.memmap(filename=self.working_dir/'label_ids.memmap',
                                   shape=(num_samples, tokenizer.vocab_size), mode='w+', dtype=np.float)
             label_ids[:] = -1
-            logger.info('Initialized numpy placeholders with memmap')
+            logger.info('Initialized placeholders with memmap: label_ids')
         else:
             input_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.int32)
             input_masks = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
