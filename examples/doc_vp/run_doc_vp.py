@@ -235,8 +235,9 @@ class PregeneratedDataset(Dataset):
         if reduce_memory:
             self.temp_dir = TemporaryDirectory()
             self.working_dir = Path(self.temp_dir.name)
+            logger.info(f'Initialized working_dir: {self.working_dir}')
             input_ids = np.memmap(filename=self.working_dir/'input_ids.memmap',
-                                  mode='w+', dtype=np.int32, shape=(num_samples, seq_len))
+                                  shape=(num_samples, seq_len), mode='w+', dtype=np.int32, )
             input_masks = np.memmap(filename=self.working_dir/'input_masks.memmap',
                                     shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
             segment_ids = np.memmap(filename=self.working_dir/'segment_ids.memmap',
@@ -244,6 +245,7 @@ class PregeneratedDataset(Dataset):
             label_ids = np.memmap(filename=self.working_dir/'label_ids.memmap',
                                   shape=(num_samples, tokenizer.vocab_size), mode='w+', dtype=np.float)
             label_ids[:] = -1
+            logger.info('Initialized numpy placeholders with memmap')
         else:
             input_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.int32)
             input_masks = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
