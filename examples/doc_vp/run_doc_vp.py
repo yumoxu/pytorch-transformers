@@ -88,7 +88,7 @@ def train(args, model, tokenizer):
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter(log_dir=args.log_dir)
 
-    train_dataset = PregeneratedDataset(training_path=args.pregenerated_data, 
+    train_dataset = PregeneratedDataset(training_path=args.data_dir, 
                                         num_training_examples=args.num_training_examples,
                                         seq_len=args.max_seq_length,
                                         tokenizer=tokenizer,
