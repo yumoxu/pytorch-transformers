@@ -263,7 +263,9 @@ class PregeneratedDataset(Dataset):
             for i, line in enumerate(tqdm(f, total=num_samples, desc="Training examples")):
                 line = line.strip()
                 example = json.loads(line)
-                features = convert_vp_example_to_features(example, tokenizer, seq_len)
+                features = convert_vp_example_to_features(example=example, 
+                                                          max_seq_length=seq_len,
+                                                          tokenizer=tokenizer)
                 input_ids[i] = features.input_ids
                 segment_ids[i] = features.segment_ids
                 input_masks[i] = features.input_mask
