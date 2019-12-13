@@ -89,7 +89,7 @@ def train(args, model, tokenizer):
         tb_writer = SummaryWriter(log_dir=args.log_dir)
 
     train_dataset = PregeneratedDataset(training_path=args.data_dir, 
-                                        num_training_examples=args.num_training_examples,
+                                        num_samples=args.num_training_examples,
                                         seq_len=args.max_seq_length,
                                         tokenizer=tokenizer,
                                         reduce_memory=args.reduce_memory)
@@ -223,7 +223,7 @@ def train(args, model, tokenizer):
 
 
 class PregeneratedDataset(Dataset):
-    def __init__(self, training_path, tokenizer, num_training_examples, seq_len, reduce_memory=False):
+    def __init__(self, training_path, tokenizer, num_samples, seq_len, reduce_memory=False):
         self.vocab = tokenizer.vocab
         self.vocab_size = len(self.vocab)
 
