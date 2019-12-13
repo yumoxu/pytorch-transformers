@@ -204,10 +204,6 @@ def train(args, model, tokenizer):
 
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
                     # Save model checkpoint
-                    # Evaluate before saving
-                    if not (args.local_rank == -1 and args.evaluate_during_training):
-                        # Only evaluate when single GPU otherwise metrics may not average well
-                        raise ValueError('Have to eval before saving model!')                    
                     save_model(args, global_step, model)
 
             if args.max_steps > 0 and global_step > args.max_steps:
@@ -310,10 +306,6 @@ def main():
                              "than this will be truncated, sequences shorter will be padded.")
     parser.add_argument("--do_train", action='store_true',
                         help="Whether to run training.")
-    parser.add_argument("--do_eval", action='store_true',
-                        help="Whether to run eval on the dev set.")
-    parser.add_argument("--evaluate_during_training", action='store_true',
-                        help="Rul evaluation during training at each logging step.")
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--reduce_memory", action="store_true",
