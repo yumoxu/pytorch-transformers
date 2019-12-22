@@ -44,7 +44,7 @@ from pytorch_transformers import (WEIGHTS_NAME, BertConfig, BertTokenizer,
 
 from pytorch_transformers import AdamW, WarmupLinearSchedule
 
-from utils_doc_vp import (compute_metrics, convert_vp_examples_to_features, convert_vp_example_to_features, output_modes, processors)
+from utils_doc_vp import (compute_metrics, convert_vp_examples_to_features, convert_vp_example_to_features_w_multi_hot_labels, convert_vp_example_to_features, output_modes, processors)
 from checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
 from modeling_bert import BertForVocabPrediction
 
@@ -83,6 +83,24 @@ def save_model(args, global_step, model):
     logger.info("Saving model checkpoint to %s", output_dir)
 
 
+
+def doc_vocab2multi_hot(doc_vocab, vocab_size):
+    """ 
+        Input doc_vocab: batch_size * max_doc_vocab_size
+        Return multi-hot tensors: doc_vocab_mh: batch_size * vocab_size
+        
+    """
+    doc_vocab_mh = torch.tensor([len(doc_vocab), vocab_size])
+    
+    # todo: test index with ipython
+    for doc_idx, vocab_ids in enumerate(doc_vocab):
+        vocab_ids = [int(i) for i in vocab_ids if i != -1]
+        # vocab_ids = (vocab_ids != -1).nonzero().squeeze(1)
+        doc_vocab_mh[doc_idx, vocab_ids] = 1
+
+    return doc_vocab_mh
+
+
 def train(args, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
@@ -92,9 +110,10 @@ def train(args, model, tokenizer):
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
     train_dataset = PregeneratedDataset(training_path=args.data_dir, 
-                                        num_samples=args.num_training_examples,
-                                        seq_len=args.max_seq_length,
                                         tokenizer=tokenizer,
+                                        num_samples=args.num_training_examples,
+                                        max_doc_vocab_size=args.max_doc_vocab_size,
+                                        seq_len=args.max_seq_length,
                                         reduce_memory=args.reduce_memory,
                                         temp_path=temp_path)
 
@@ -161,6 +180,8 @@ def train(args, model, tokenizer):
         epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
         for step, batch in enumerate(epoch_iterator):
             model.train()
+            # turn doc vocab ids to multi-hot matrix
+            batch[3] = doc_vocab2multi_hot(doc_vocab=batch[3], vocab_size=tokenizer.vocab_size)
             batch = tuple(t.to(args.device) for t in batch)
             # logger.info('Put batch onto args.device: {}'.format(args.device))
             inputs = {'input_ids':      batch[0],
@@ -226,7 +247,7 @@ def train(args, model, tokenizer):
     return global_step, tr_loss / global_step
 
 
-class PregeneratedDataset(Dataset):
+class PregeneratedDatasetWithMultiHotLabels(Dataset):
     def __init__(self, training_path, tokenizer, num_samples, seq_len, reduce_memory=False, temp_path=None):
         self.vocab = tokenizer.vocab
         self.vocab_size = len(self.vocab)
@@ -263,8 +284,68 @@ class PregeneratedDataset(Dataset):
             for i, line in enumerate(tqdm(f, total=num_samples, desc="Training examples")):
                 line = line.strip()
                 example = json.loads(line)
+                features = convert_vp_example_to_features_w_multi_hot_labels(example=example, max_seq_length=seq_len, tokenizer=tokenizer)
+                input_ids[i] = features.input_ids
+                segment_ids[i] = features.segment_ids
+                input_masks[i] = features.input_mask
+                label_ids[i] = features.label_ids
+        assert i == num_samples - 1  # Assert that the sample count metric was true
+        logging.info("Loading complete!")
+        self.num_samples = num_samples
+        self.seq_len = seq_len
+        self.input_ids = input_ids
+        self.input_masks = input_masks
+        self.segment_ids = segment_ids
+        self.label_ids = label_ids
+
+    def __len__(self):
+        return self.num_samples
+
+    def __getitem__(self, item):
+        return (torch.tensor(self.input_ids[item].astype(np.int64)),
+                torch.tensor(self.input_masks[item].astype(np.int64)),
+                torch.tensor(self.segment_ids[item].astype(np.int64)),
+                torch.tensor(self.label_ids[item].astype(np.float)))
+
+
+
+class PregeneratedDataset(Dataset):
+    def __init__(self, training_path, tokenizer, num_samples, max_doc_vocab_size, seq_len, reduce_memory=False, temp_path=None):
+        data_file = Path(training_path) / 'all.json'
+        assert data_file.is_file()
+
+        self.temp_dir = None
+        self.working_dir = None
+        if reduce_memory:
+            self.temp_dir = TemporaryDirectory(dir=temp_path)
+            self.working_dir = Path(self.temp_dir.name)
+            logger.info(f'Initialized working_dir: {self.working_dir}')
+            input_ids = np.memmap(filename=self.working_dir/'input_ids.memmap',
+                                  shape=(num_samples, seq_len), mode='w+', dtype=np.int32)
+            logger.info('Initialized placeholders with memmap: input_ids')
+            input_masks = np.memmap(filename=self.working_dir/'input_masks.memmap',
+                                    shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
+            logger.info('Initialized placeholders with memmap: input_masks')
+            segment_ids = np.memmap(filename=self.working_dir/'segment_ids.memmap',
+                                    shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
+            logger.info('Initialized placeholders with memmap: segment_ids')
+            label_ids = np.memmap(filename=self.working_dir/'label_ids.memmap',
+                                  shape=(num_samples, max_doc_vocab_size), mode='w+', dtype=np.int32)
+            label_ids[:] = -1
+            logger.info('Initialized placeholders with memmap: label_ids')
+        else:
+            input_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.int32)
+            input_masks = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
+            segment_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
+            label_ids = np.full(shape=(num_samples, max_doc_vocab_size), dtype=np.int32, fill_value=-1)
+        
+        with data_file.open() as f:
+            for i, line in enumerate(tqdm(f, total=num_samples, desc="Training examples")):
+                line = line.strip()
+                example = json.loads(line)
                 features = convert_vp_example_to_features(example=example, 
                                                           max_seq_length=seq_len,
+                                                          max_doc_vocab_size=max_doc_vocab_size,
                                                           tokenizer=tokenizer)
                 input_ids[i] = features.input_ids
                 segment_ids[i] = features.segment_ids
@@ -273,6 +354,8 @@ class PregeneratedDataset(Dataset):
         assert i == num_samples - 1  # Assert that the sample count metric was true
         logging.info("Loading complete!")
         self.num_samples = num_samples
+        self.max_doc_vocab_size = max_doc_vocab_size
+
         self.seq_len = seq_len
         self.input_ids = input_ids
         self.input_masks = input_masks
@@ -315,6 +398,9 @@ def main():
                         help="Where do you want to store the pre-trained models downloaded from s3")
     parser.add_argument("--max_seq_length", default=512, type=int,
                         help="The maximum total input sequence length after tokenization. Sequences longer "
+                             "than this will be truncated, sequences shorter will be padded.")
+    parser.add_argument("--max_doc_vocab_size", default=2048, type=int,
+                        help="The maximum size of vocabulary that a document can cover. Sequences longer "
                              "than this will be truncated, sequences shorter will be padded.")
     parser.add_argument("--do_train", action='store_true',
                         help="Whether to run training.")

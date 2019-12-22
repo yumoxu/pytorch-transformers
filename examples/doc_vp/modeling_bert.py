@@ -1398,9 +1398,13 @@ class BertForVocabPrediction(BertPreTrainedModel):
         self.bert = BertModel(config)
         self.cls = nn.Linear(config.hidden_size, config.vocab_size)
         self.apply(self.init_weights)
+        self.vocab_size = config.vocab_size
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, doc_vocab=None,
                 position_ids=None, head_mask=None):
+        """
+            doc_vocab: batch_size * vocab_size
+        """
         outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
                             attention_mask=attention_mask, head_mask=head_mask)
         # logger.info('outputs: {}'.format(outputs.size()))

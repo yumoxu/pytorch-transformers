@@ -390,7 +390,74 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
 
 
 def convert_vp_examples_to_features(examples, max_seq_length,
-                                    tokenizer, output_mode,
+                                                     tokenizer, output_mode,
+                                                     cls_token_at_end=False,
+                                                     cls_token='[CLS]',
+                                                     cls_token_segment_id=1,
+                                                     sep_token='[SEP]',
+                                                     sep_token_extra=False,
+                                                     pad_on_left=False,
+                                                     pad_token=0,
+                                                     pad_token_segment_id=0,
+                                                     sequence_a_segment_id=0,
+                                                     sequence_b_segment_id=1,
+                                                     mask_padding_with_zero=True):
+    """ Loads a data file into a list of `InputBatch`s
+        `cls_token_at_end` define the location of the CLS token:
+            - False (Default, BERT/XLM pattern): [CLS] + A + [SEP] + B + [SEP]
+            - True (XLNet/GPT pattern): A + [SEP] + B + [SEP] + [CLS]
+        `cls_token_segment_id` define the segment id associated to the CLS token (0 for BERT, 2 for XLNet)
+    """
+
+    features = []
+    for (ex_index, example) in enumerate(examples):
+        if ex_index % 10000 == 0:
+            logger.info("Writing example %d of %d" % (ex_index, len(examples)))
+
+        input_ids = tokenizer.convert_tokens_to_ids(example.tokens)
+        input_mask = [1 if mask_padding_with_zero else 0] * len(input_ids)
+        # Zero-pad up to the sequence length.
+        padding_length = max_seq_length - len(input_ids)
+        if pad_on_left:
+            input_ids = ([pad_token] * padding_length) + input_ids
+            input_mask = ([0 if mask_padding_with_zero else 1] * padding_length) + input_mask
+            segment_ids = ([pad_token_segment_id] * padding_length) + example.segment_ids
+        else:
+            input_ids = input_ids + ([pad_token] * padding_length)
+            input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
+            segment_ids = example.segment_ids + ([pad_token_segment_id] * padding_length)
+
+        assert len(input_ids) == max_seq_length
+        assert len(input_mask) == max_seq_length
+        assert len(segment_ids) == max_seq_length
+
+        label_ids = [0] * tokenizer.vocab_size
+        doc_vocab = tokenizer.convert_tokens_to_ids(example.doc_vocab)
+        for token_id in doc_vocab:
+            label_ids[token_id] = 1
+
+        if ex_index < 5:
+            logger.info("*** Example ***")
+            logger.info("guid: %s" % (example.guid))
+            logger.info("tokens: %s" % " ".join(
+                    [str(x) for x in example.tokens]))
+            logger.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
+            logger.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
+            logger.info("segment_ids: %s" % " ".join([str(x) for x in segment_ids]))
+            logger.info("label_ids: %s" % label_ids)
+
+        features.append(
+                InputFeatures(input_ids=input_ids,
+                              input_mask=input_mask,
+                              segment_ids=segment_ids,
+                              label_ids=label_ids))
+    return features
+
+
+def convert_vp_examples_to_features(examples, 
+                                    max_seq_length,
+                                    tokenizer, 
+                                    output_mode,
                                     cls_token_at_end=False,
                                     cls_token='[CLS]',
                                     cls_token_segment_id=1,
@@ -454,12 +521,14 @@ def convert_vp_examples_to_features(examples, max_seq_length,
     return features
 
 
-def convert_vp_example_to_features(example, max_seq_length,
-                                   tokenizer,
-                                   pad_token=0,
-                                   pad_token_segment_id=0,
-                                   mask_padding_with_zero=True):
+def convert_vp_example_to_features_w_multi_hot_labels(example, max_seq_length,
+                                                      tokenizer,
+                                                      pad_token=0,
+                                                      pad_token_segment_id=0,
+                                                      mask_padding_with_zero=True):
     """ Covert a json-format example to features.
+        label_ids: 1 * vocab_size.
+
     """
 
     input_ids = tokenizer.convert_tokens_to_ids(example['tokens'])
@@ -479,6 +548,36 @@ def convert_vp_example_to_features(example, max_seq_length,
     doc_vocab = tokenizer.convert_tokens_to_ids(example['doc_vocab'])
     for token_id in doc_vocab:
         label_ids[token_id] = 1
+
+    features = InputFeatures(input_ids=input_ids, input_mask=input_mask, segment_ids=segment_ids, label_ids=label_ids)
+    return features
+
+
+def convert_vp_example_to_features(example, max_seq_length, max_doc_vocab_size, tokenizer,
+                                   pad_token=0,
+                                   pad_token_segment_id=0,
+                                   mask_padding_with_zero=True):
+    """ Covert a json-format example to features.
+
+        label_ids: 1 * max_doc_vocab_size.
+    """
+
+    input_ids = tokenizer.convert_tokens_to_ids(example['tokens'])
+    input_mask = [1 if mask_padding_with_zero else 0] * len(input_ids)
+    # Zero-pad up to the sequence length.
+    padding_length = max_seq_length - len(input_ids)
+
+    input_ids = input_ids + ([pad_token] * padding_length)
+    input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
+    segment_ids = example['segment_ids'] + ([pad_token_segment_id] * padding_length)
+
+    assert len(input_ids) == max_seq_length
+    assert len(input_mask) == max_seq_length
+    assert len(segment_ids) == max_seq_length
+
+    label_ids = [-1] * max_doc_vocab_size
+    doc_vocab = tokenizer.convert_tokens_to_ids(example['doc_vocab'])[:max_doc_vocab_size]
+    label_ids[:len(doc_vocab)] = doc_vocab
 
     features = InputFeatures(input_ids=input_ids, input_mask=input_mask, segment_ids=segment_ids, label_ids=label_ids)
     return features
