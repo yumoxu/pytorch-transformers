@@ -83,20 +83,19 @@ def save_model(args, global_step, model):
     logger.info("Saving model checkpoint to %s", output_dir)
 
 
-
 def doc_vocab2multi_hot(doc_vocab, vocab_size):
     """ 
         Input doc_vocab: batch_size * max_doc_vocab_size
         Return multi-hot tensors: doc_vocab_mh: batch_size * vocab_size
         
     """
-    doc_vocab_mh = torch.tensor([len(doc_vocab), vocab_size])
+    doc_vocab_mh = torch.tensor([len(doc_vocab), vocab_size], dtype=torch.float32)
     
     # todo: test index with ipython
     for doc_idx, vocab_ids in enumerate(doc_vocab):
         vocab_ids = [int(i) for i in vocab_ids if i != -1]
         # vocab_ids = (vocab_ids != -1).nonzero().squeeze(1)
-        doc_vocab_mh[doc_idx, vocab_ids] = 1
+        doc_vocab_mh[doc_idx, vocab_ids] = 1.0
 
     return doc_vocab_mh
 
@@ -369,7 +368,7 @@ class PregeneratedDataset(Dataset):
         return (torch.tensor(self.input_ids[item].astype(np.int64)),
                 torch.tensor(self.input_masks[item].astype(np.int64)),
                 torch.tensor(self.segment_ids[item].astype(np.int64)),
-                torch.tensor(self.label_ids[item].astype(np.float)))
+                torch.tensor(self.label_ids[item].astype(np.int64)))
 
 
 def main():
