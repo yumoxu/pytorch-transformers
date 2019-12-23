@@ -173,6 +173,8 @@ def train(args, model, tokenizer):
 
     checkpoint_dict = dict()  # {n_batches: f1}
     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
+    headline = 'Step\tTrain\n'
+    io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
     model.zero_grad()
     train_iterator = trange(int(args.num_train_epochs), desc="Epoch", disable=args.local_rank not in [-1, 0])
@@ -220,10 +222,6 @@ def train(args, model, tokenizer):
                     avg_loss = (tr_loss - logging_loss) / args.logging_steps
                     tb_writer.add_scalar('train_loss', avg_loss, global_step)
                     logging_loss = tr_loss
-
-                    if not os.path.exists(output_eval_file):
-                        headline = 'Step\tTrain\n'
-                        io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
                     record = '{}\t{:.4f}\n'.format(global_step, avg_loss)
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
