@@ -90,7 +90,7 @@ def doc_vocab2multi_hot(doc_vocab, vocab_size):
         
     """
     logger.info('doc_vocab: {}'.format(doc_vocab.size()))
-    doc_vocab_mh = torch.tensor([len(doc_vocab), vocab_size], dtype=torch.float32)
+    doc_vocab_mh = torch.zeros([len(doc_vocab), vocab_size], dtype=torch.float32)
     # todo: test index with ipython
     for doc_idx, vocab_ids in enumerate(doc_vocab):
         logger.info('vocab_ids: {}'.format(vocab_ids.size()))
