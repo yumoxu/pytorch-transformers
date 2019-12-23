@@ -89,7 +89,7 @@ def doc_vocab2multi_hot(doc_vocab, vocab_size):
         Return multi-hot tensors: doc_vocab_mh: batch_size * vocab_size
         
     """
-    logger.info('doc_vocab: {}'.format(doc_vocab.size()))
+    # logger.info('doc_vocab: {}'.format(doc_vocab.size()))
     doc_vocab_mh = torch.zeros([len(doc_vocab), vocab_size], dtype=torch.float32)
     # todo: test index with ipython
     for doc_idx, vocab_ids in enumerate(doc_vocab):
