@@ -229,7 +229,7 @@ def train(args, model, tokenizer):
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
 
                 if args.local_rank in [-1, 0] and args.save_steps > 0 and global_step % args.save_steps == 0:
-                    logger.info('global_step: {}, save_steps: {}, global_step % args.save_steps: {}'.format(global_step, args.save_steps, global_step % args.save_steps))
+                    # logger.info('global_step: {}, save_steps: {}, global_step % args.save_steps: {}'.format(global_step, args.save_steps, global_step % args.save_steps))
                     save_model(args, global_step, model)
 
             if args.max_steps > 0 and global_step > args.max_steps:
