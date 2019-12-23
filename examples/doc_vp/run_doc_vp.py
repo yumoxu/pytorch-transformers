@@ -236,7 +236,7 @@ def train(args, model, tokenizer):
                 epoch_iterator.close()
                 break
 
-            save_model(args, global_step, model)  # save model for each epoch
+        save_model(args, global_step, model)  # save model at the end of each epoch
 
         if args.max_steps > 0 and global_step > args.max_steps:
             train_iterator.close()
