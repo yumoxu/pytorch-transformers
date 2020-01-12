@@ -1421,3 +1421,63 @@ class BertForVocabPrediction(BertPreTrainedModel):
             outputs = (vocab_loss,) + outputs
 
         return outputs  # (next_sentence_loss), seq_relationship_score, (hidden_states), (attentions)
+
+
+class BertForVocabPredictionAvgPool(BertPreTrainedModel):
+    r"""
+        **next_sentence_label**: (`optional`) ``torch.LongTensor`` of shape ``(batch_size,)``:
+            Labels for computing the next sequence prediction (classification) loss. Input should be a sequence pair (see ``input_ids`` docstring)
+            Indices should be in ``[0, 1]``.
+            ``0`` indicates sequence B is a continuation of sequence A,
+            ``1`` indicates sequence B is a random sequence.
+
+    Outputs: `Tuple` comprising various elements depending on the configuration (config) and inputs:
+        **loss**: (`optional`, returned when ``next_sentence_label`` is provided) ``torch.FloatTensor`` of shape ``(1,)``:
+            Next sequence prediction (classification) loss.
+        **seq_relationship_scores**: ``torch.FloatTensor`` of shape ``(batch_size, sequence_length, 2)``
+            Prediction scores of the next sequence prediction (classification) head (scores of True/False continuation before SoftMax).
+        **hidden_states**: (`optional`, returned when ``config.output_hidden_states=True``)
+            list of ``torch.FloatTensor`` (one for the output of each layer + the output of the embeddings)
+            of shape ``(batch_size, sequence_length, hidden_size)``:
+            Hidden-states of the model at the output of each layer plus the initial embedding outputs.
+        **attentions**: (`optional`, returned when ``config.output_attentions=True``)
+            list of ``torch.FloatTensor`` (one for each layer) of shape ``(batch_size, num_heads, sequence_length, sequence_length)``:
+            Attentions weights after the attention softmax, used to compute the weighted average in the self-attention heads.
+
+    Examples::
+
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        model = BertForVocabPrediction.from_pretrained('bert-base-uncased')
+        input_ids = torch.tensor(tokenizer.encode("Hello, my dog is cute")).unsqueeze(0)  # Batch size 1
+        outputs = model(input_ids)
+        seq_relationship_scores = outputs[0]
+
+    """
+    def __init__(self, config):
+        super(BertForVocabPredictionAvgPool, self).__init__(config)
+
+        self.bert = BertModel(config)
+        self.cls = nn.Linear(config.hidden_size, config.vocab_size)
+        self.apply(self.init_weights)
+        self.vocab_size = config.vocab_size
+
+    def forward(self, input_ids, token_type_ids=None, attention_mask=None, doc_vocab=None,
+                position_ids=None, head_mask=None):
+        """
+            doc_vocab: batch_size * vocab_size
+        """
+        outputs = self.bert(input_ids, position_ids=position_ids, token_type_ids=token_type_ids,
+                            attention_mask=attention_mask, head_mask=head_mask)
+        sequence_output = outputs[0]  # batch_size * max_nt * hidden_size
+        vocab_scores = self.cls(pooled_output)  # batch_size * max_nt * vocab_size
+        
+        doc_vocab_scores =torch.mean(vocab_scores, dim=1, keepdim=False)  # batch_size * hidden_size
+        # logger.info('doc_vocab_scores: {}'.format(doc_vocab_scores.size()))
+    
+        outputs = (doc_vocab_scores,) + outputs[2:]  # add hidden states and attention if they are here
+        if doc_vocab is not None:
+            loss_fct = BCEWithLogitsLoss()  # has sigmoid internally
+            vocab_loss = loss_fct(doc_vocab_scores.view(-1), doc_vocab.view(-1))
+            outputs = (vocab_loss,) + outputs
+
+        return outputs  # (next_sentence_loss), seq_relationship_score, (hidden_states), (attentions)

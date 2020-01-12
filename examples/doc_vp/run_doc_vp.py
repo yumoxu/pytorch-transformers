@@ -46,7 +46,7 @@ from pytorch_transformers import AdamW, WarmupLinearSchedule
 
 from utils_doc_vp import (compute_metrics, convert_vp_examples_to_features, convert_vp_example_to_features_w_multi_hot_labels, convert_vp_example_to_features, output_modes, processors)
 from checkpoint_utils import (update_checkpoint_dict, clean_outdated_checkpoints)
-from modeling_bert import BertForVocabPrediction
+from modeling_bert import BertForVocabPrediction, BertForVocabPredictionAvgPool
 
 
 logger = logging.getLogger(__name__)
@@ -55,11 +55,8 @@ logger = logging.getLogger(__name__)
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (BertConfig, XLNetConfig, XLMConfig)), ())
 
 MODEL_CLASSES = {
-    # 'bert': (BertConfig, BertForNextSentencePrediction, BertTokenizer),
     'bert': (BertConfig, BertForVocabPrediction, BertTokenizer),
-    'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
-    'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
-    # 'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
+    'bert-avg-pool': (BertConfig, BertForVocabPredictionAvgPool, BertTokenizer),
 }
 
 
