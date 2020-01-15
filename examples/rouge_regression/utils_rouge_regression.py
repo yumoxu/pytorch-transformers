@@ -444,7 +444,7 @@ def pearson_and_spearman(preds, labels):
 
 def compute_metrics(task_name, preds, labels):
     assert len(preds) == len(labels)
-    elif task_name == "sst-2":
+    if task_name == "sst-2":
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "rr":
         return pearson_and_spearman(preds, labels)
