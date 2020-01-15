@@ -245,13 +245,15 @@ class Rrprocessor(DataProcessor):
     def get_labels(self):
         """See base class."""
         return [None]
-
-    def get_label(self, rouge_2_recall, rouge_1_recall, rouge_c):
+    
+    def preprocess_json(self, json_obj, rouge_c):
         """
             rouge_c: ROUGE coefficient; it controls the smoothing effects from rouge_1_recall.
         """
-        label = (1 - rouge_c) * rouge_2_recall + rouge_c * rouge_1_recall
-        return label
+        text_a = ' '.join(json_obj['masked_summary'])  # masked_summary is a word list
+        text_b = json_obj['sentence'].replace('NEWLINE_CHAR', '')
+        label = (1 - rouge_c) * float(json_obj['rouge_2_recall']) + rouge_c * float(json_obj['rouge_1_recall'])
+        return text_a, text_b, label
 
     def _create_examples(self, lines, rouge_c):
         """Creates examples for the training and dev sets."""
@@ -259,11 +261,7 @@ class Rrprocessor(DataProcessor):
         for (i, line) in enumerate(lines):
             json_obj = json.loads(line.strip('\n'))
             guid = json_obj['sid']
-            label = self.get_label(rouge_2_recall=json_obj['rouge_2_recall'], 
-                                   rouge_1_recall=json_obj['rouge_1_recall'], 
-                                   rouge_c=rouge_c)
-            text_a = json_obj['masked_summary']
-            text_b = json_obj['sentence']
+            text_a, text_b, label = self.preprocess_json(json_obj, rouge_c)
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
