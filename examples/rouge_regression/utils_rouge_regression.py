@@ -259,8 +259,8 @@ class Rrprocessor(DataProcessor):
         for (i, line) in enumerate(lines):
             json_obj = json.loads(line.strip('\n'))
             guid = json_obj['sid']
-            label = self.get_label(rouge_2_recall=json['rouge_2_recall'], 
-                                   rouge_1_recall=json['rouge_1_recall'], 
+            label = self.get_label(rouge_2_recall=json_obj['rouge_2_recall'], 
+                                   rouge_1_recall=json_obj['rouge_1_recall'], 
                                    rouge_c=rouge_c)
             text_a = json_obj['masked_summary']
             text_b = json_obj['sentence']
