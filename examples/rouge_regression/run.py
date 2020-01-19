@@ -195,9 +195,9 @@ def train(args, train_dataset, model, tokenizer):
                         'checkpoint_dict': checkpoint_dict,
                         'k': global_step,
                         'max_n_checkpoint': 3,
-                        'v': results['eval_loss'],  # results['corr']
+                        'v': results['corr'],  # results['corr'], results['eval_loss']
                     }
-                    checkpoint_dict, update, _ = update_checkpoint_dict(**update_params)
+                    checkpoint_dict, update, _ = update_checkpoint_dict(**update_params)  # the larger, the better
 
                     if update:
                         # init dir
