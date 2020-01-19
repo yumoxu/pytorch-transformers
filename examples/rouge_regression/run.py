@@ -183,10 +183,10 @@ def train(args, train_dataset, model, tokenizer):
                     output_eval_file = os.path.join(args.output_dir, 'eval_results.txt')
 
                     if not os.path.exists(output_eval_file):
-                        headline = 'Step\tTrain\tEval\tMicroF1\n'
+                        headline = 'Step\tTrain\tEval\Correlation\n'
                         io.open(output_eval_file, 'a', encoding='utf-8').write(headline)
 
-                    record = '{}\t{:.4f}\t{:.4f}\t{:.4f}\n'.format(global_step, avg_loss,
+                    record = '{}\t{:.8f}\t{:.8f}\t{:.4f}\n'.format(global_step, avg_loss,
                                                                    results['eval_loss'],
                                                                    100*results['corr'])
                     io.open(output_eval_file, 'a', encoding='utf-8').write(record)
