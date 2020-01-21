@@ -28,7 +28,6 @@ import os
 import io
 import random
 
-
 import numpy as np
 import torch
 from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
@@ -563,7 +562,7 @@ def main():
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
                                                 do_lower_case=args.do_lower_case,
                                                 do_basic_tokenize=True,
-                                                additional_special_tokens=['[unused1]', '[unused2]', '[unused3]', '[unused4]'])
+                                                additional_special_tokens=['[SLOT]'])  # in case slot is represented with [SLOT] (compared to [MASK])
 
     # debug special tokens
     # print('[unused1]: {}'.format(tokenizer.convert_tokens_to_ids('[unused1]')))
