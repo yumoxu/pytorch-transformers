@@ -229,7 +229,7 @@ class StsbProcessor(DataProcessor):
         return examples
 
 
-class Rrprocessor(DataProcessor):
+class RrSentenceProcessor(DataProcessor):
     """Processor for the Rouge Regression data set."""
     def get_train_examples(self, data_dir, rouge_c):
         """
@@ -267,6 +267,45 @@ class Rrprocessor(DataProcessor):
         return examples
 
 
+class RrPassageProcessor(DataProcessor):
+    """Processor for the Rouge Regression data set."""
+    def get_train_examples(self, data_dir, rouge_c):
+        """
+            rouge_coefficient: for calculating labels
+        """
+        lines = open(os.path.join(data_dir, "train.json")).readlines()
+        return self._create_examples(lines, rouge_c=rouge_c)
+
+    def get_dev_examples(self, data_dir, rouge_c):
+        lines = open(os.path.join(data_dir, "val.json")).readlines()
+        return self._create_examples(lines, rouge_c=rouge_c)
+
+    def get_labels(self):
+        """See base class."""
+        return [None]
+    
+    def preprocess_json(self, json_obj, rouge_c):
+        """
+            rouge_c: ROUGE coefficient; it controls the smoothing effects from rouge_1_recall.
+        """
+        text_a = ' '.join(json_obj['masked_summary'])  # masked_summary is a word list
+        text_b = [sentence.replace('NEWLINE_CHAR', '') for sentence in json_obj['passage']]
+
+        label = (1 - rouge_c) * float(json_obj['rouge_2_recall']) + rouge_c * float(json_obj['rouge_1_recall'])
+        return text_a, text_b, label
+
+    def _create_examples(self, lines, rouge_c):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            json_obj = json.loads(line.strip('\n'))
+            guid = json_obj['pid']
+            text_a, text_b, label = self.preprocess_json(json_obj, rouge_c)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+        return examples
+
+
 def convert_examples_to_features(examples, label_list, max_seq_length,
                                  tokenizer, output_mode,
                                  cls_token_at_end=False,
@@ -298,7 +337,13 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
 
         tokens_b = None
         if example.text_b:
-            tokens_b = tokenizer.tokenize(example.text_b)
+            if type(example.text_b) == str:
+                tokens_b = tokenizer.tokenize(example.text_b)
+            else:
+                tokens = [tokenizer.tokenize(sentence)[:50] for sentence in example.text_b]
+                import itertools
+                tokens_b = list(itertools.chain(*tokens))
+
             # Modifies `tokens_a` and `tokens_b` in place so that the total
             # length is less than the specified length.
             # Account for [CLS], [SEP], [SEP] with "- 3". " -4" for RoBERTa.
@@ -448,6 +493,8 @@ def compute_metrics(task_name, preds, labels):
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "rr":
         return pearson_and_spearman(preds, labels)
+    elif task_name == "rr-p":
+        return pearson_and_spearman(preds, labels)
     elif task_name == "mrpc":
         return acc_and_f1(preds, labels)
     elif task_name == "sts-b":
@@ -463,16 +510,15 @@ def compute_metrics(task_name, preds, labels):
 processors = {
     "mnli": MnliProcessor,
     "mnli-mm": MnliMismatchedProcessor,
-    "rr": Rrprocessor,
-    "mrpc": MrpcProcessor,
-    "sst-2": Sst2Processor,
-    "sts-b": StsbProcessor,
+    "rr": RrSentenceProcessor,
+    "rr-p": RrPassageProcessor,
 }
 
 output_modes = {
     "mnli": "classification",
     "mnli-mm": "classification",
     "rr": "regression",
+    "rr-p": "regression",
     "mrpc": "classification",
     "sst-2": "classification",
     "sts-b": "regression",
@@ -481,6 +527,7 @@ output_modes = {
 GLUE_TASKS_NUM_LABELS = {
     "mnli": 3,
     "rr": 1,
+    "rr-p": 1,
     "mrpc": 2,
     "sst-2": 2,
     "sts-b": 1,
