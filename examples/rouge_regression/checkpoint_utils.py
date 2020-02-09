@@ -62,3 +62,4 @@ def clean_outdated_checkpoints(checkpoint, checkpoint_dict):
 
     ckpt_dirs = [dir for dir in listdir(checkpoint) if dir.startswith('checkpoint-')]
     logger.info('Available #checkpoints: {}'.format(len(ckpt_dirs)))
+    

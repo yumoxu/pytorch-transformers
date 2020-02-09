@@ -231,37 +231,44 @@ class StsbProcessor(DataProcessor):
 
 class RrSentenceProcessor(DataProcessor):
     """Processor for the Rouge Regression data set."""
-    def get_train_examples(self, data_dir, rouge_c):
+    def get_train_examples(self, data_dir, rouge_c, metric, metric):
         """
             rouge_coefficient: for calculating labels
         """
         lines = open(os.path.join(data_dir, "train.json")).readlines()
-        return self._create_examples(lines, rouge_c=rouge_c)
+        return self._create_examples(lines, rouge_c=rouge_c, metric=metric)
 
-    def get_dev_examples(self, data_dir, rouge_c):
+    def get_dev_examples(self, data_dir, rouge_c, metric):
         lines = open(os.path.join(data_dir, "val.json")).readlines()
-        return self._create_examples(lines, rouge_c=rouge_c)
+        return self._create_examples(lines, rouge_c=rouge_c, metric=metric)
 
     def get_labels(self):
         """See base class."""
         return [None]
     
-    def preprocess_json(self, json_obj, rouge_c):
+    def preprocess_json(self, json_obj, rouge_c, metric):
         """
             rouge_c: ROUGE coefficient; it controls the smoothing effects from rouge_1_recall.
         """
         text_a = ' '.join(json_obj['masked_summary'])  # masked_summary is a word list
         text_b = json_obj['sentence'].replace('NEWLINE_CHAR', '')
-        label = (1 - rouge_c) * float(json_obj['rouge_2_recall']) + rouge_c * float(json_obj['rouge_1_recall'])
+        if metric == 'rouge_2_recall':
+            smooth_metric = 'rouge_1_recall'
+        elif metric == 'rouge_2_f1':
+            smooth_metric = 'rouge_1_f1'
+        else:
+            raise ValueError(f'Invalid smooth_metric: {smooth_metric}')
+
+        label = (1 - rouge_c) * float(json_obj[metric]) + rouge_c * float(json_obj[smooth_metric])
         return text_a, text_b, label
 
-    def _create_examples(self, lines, rouge_c):
+    def _create_examples(self, lines, rouge_c, metric):
         """Creates examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
             json_obj = json.loads(line.strip('\n'))
             guid = json_obj['sid']
-            text_a, text_b, label = self.preprocess_json(json_obj, rouge_c)
+            text_a, text_b, label = self.preprocess_json(json_obj, rouge_c, metric=metric)
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
