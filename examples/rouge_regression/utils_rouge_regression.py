@@ -231,7 +231,7 @@ class StsbProcessor(DataProcessor):
 
 class RrSentenceProcessor(DataProcessor):
     """Processor for the Rouge Regression data set."""
-    def get_train_examples(self, data_dir, rouge_c, metric, metric):
+    def get_train_examples(self, data_dir, rouge_c, metric):
         """
             rouge_coefficient: for calculating labels
         """
