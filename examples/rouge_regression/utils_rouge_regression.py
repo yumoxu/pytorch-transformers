@@ -231,27 +231,32 @@ class StsbProcessor(DataProcessor):
 
 class RrSentenceProcessor(DataProcessor):
     """Processor for the Rouge Regression data set."""
-    def get_train_examples(self, data_dir, rouge_c, metric):
+    def get_train_examples(self, data_dir, rouge_c, metric, no_query):
         """
             rouge_coefficient: for calculating labels
         """
         lines = open(os.path.join(data_dir, "train.json")).readlines()
-        return self._create_examples(lines, rouge_c=rouge_c, metric=metric)
+        return self._create_examples(lines, rouge_c=rouge_c, metric=metric, no_query=no_query)
 
-    def get_dev_examples(self, data_dir, rouge_c, metric):
+    def get_dev_examples(self, data_dir, rouge_c, metric, no_query):
         lines = open(os.path.join(data_dir, "val.json")).readlines()
-        return self._create_examples(lines, rouge_c=rouge_c, metric=metric)
+        return self._create_examples(lines, rouge_c=rouge_c, metric=metric, no_query=no_query)
 
     def get_labels(self):
         """See base class."""
         return [None]
     
-    def preprocess_json(self, json_obj, rouge_c, metric):
+    def preprocess_json(self, json_obj, rouge_c, metric, no_query):
         """
             rouge_c: ROUGE coefficient; it controls the smoothing effects from rouge_1_recall.
         """
-        text_a = ' '.join(json_obj['masked_summary'])  # masked_summary is a word list
-        text_b = json_obj['sentence'].replace('NEWLINE_CHAR', '')
+        if no_query:
+            text_a = json_obj['sentence'].replace('NEWLINE_CHAR', '')
+            text_b = None
+        else:
+            text_a = ' '.join(json_obj['masked_summary'])  # masked_summary is a word list
+            text_b = json_obj['sentence'].replace('NEWLINE_CHAR', '')
+        
         if metric == 'rouge_2_recall':
             smooth_metric = 'rouge_1_recall'
         elif metric == 'rouge_2_f1':
@@ -262,13 +267,13 @@ class RrSentenceProcessor(DataProcessor):
         label = (1 - rouge_c) * float(json_obj[metric]) + rouge_c * float(json_obj[smooth_metric])
         return text_a, text_b, label
 
-    def _create_examples(self, lines, rouge_c, metric):
+    def _create_examples(self, lines, rouge_c, metric, no_query):
         """Creates examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
             json_obj = json.loads(line.strip('\n'))
             guid = json_obj['sid']
-            text_a, text_b, label = self.preprocess_json(json_obj, rouge_c, metric=metric)
+            text_a, text_b, label = self.preprocess_json(json_obj, rouge_c, metric=metric, no_query=no_query)
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples

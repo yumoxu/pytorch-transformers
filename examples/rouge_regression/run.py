@@ -396,7 +396,14 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         if task in ['mnli', 'mnli-mm'] and args.model_type in ['roberta']:
             # HACK(label indices are swapped in RoBERTa pretrained model)
             label_list[1], label_list[2] = label_list[2], label_list[1] 
-        examples = processor.get_dev_examples(args.data_dir, rouge_c=args.rouge_c, metric=args.metric) if evaluate else processor.get_train_examples(args.data_dir, rouge_c=args.rouge_c, metric=args.metric)
+        proc_params = {
+            'data_dir': args.data_dir, 
+            'rouge_c': args.rouge_c, 
+            'metric': args.metric, 
+            'no_query': args.no_query,
+        }
+        examples = processor.get_dev_examples(**proc_params) if evaluate else processor.get_train_examples(**proc_params)
+
         features = convert_examples_to_features(examples, label_list, args.max_seq_length, tokenizer, output_mode,
             cls_token_at_end=bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
             cls_token=tokenizer.cls_token,
@@ -447,6 +454,8 @@ def main():
                         help="ROUGE coefficient that controls the smoothing effects from rouge_1_recall.")
     parser.add_argument("--metric", default='rouge_2_recall', type=str, required=True,
                         help="The main ROUGE metric to use.")
+    parser.add_argument('--no_query', action='store_true',
+                        help="Whether to use query (masked summary) in input. This is for the ablation study where BERT is for segment feature extractor.")
     
     ## Other parameters
     parser.add_argument("--config_name", default="", type=str,
