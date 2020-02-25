@@ -385,6 +385,8 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     dataset_var = 'dev' if evaluate else 'train'
     model_var = list(filter(None, args.model_name_or_path.split('/'))).pop()
     cached_features_fn = f'cached_{dataset_var}_{model_var}_{args.max_seq_length}_{task}_{metric}_{args.rouge_c}'
+    if args.no_query:
+        cached_features_fn += '_woQuery'
     cached_features_file = os.path.join(args.data_dir, cached_features_fn)
 
     if os.path.exists(cached_features_file):
